@@ -1,0 +1,12 @@
+.pointer{
+	cursor: pointer;
+}
+
+li.pointer{
+	list-style:none;
+}
+
+a.navbar-brand{
+	height:80px;
+	padding: 3px 10px;
+}
