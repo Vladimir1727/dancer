@@ -210,7 +210,9 @@ class CabinetModel extends CI_Model{
         foreach ($data as $d) {
             $html.='<tr>';
             $html.='<td class="hidden">'.$d['id'].'</td>';
-            $html.='<td>'.$d['way'].'</td>';
+            $html.='<td>'.$d['name'].'</td>';
+            $html.='<td>'.$d['min_count'].'</td>';
+            $html.='<td>'.$d['max_count'].'</td>';
             $html.='<td><button class="btn btn-warning btn-sm edit" id="e'.$d['id']
                     .'" data-toggle="modal" data-target="#editmodal">edit</button> ';
             $html.='<button class="btn btn-danger btn-sm del" id="d'.$d['id'].'">delete</button></td>';

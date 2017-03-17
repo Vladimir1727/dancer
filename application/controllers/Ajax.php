@@ -135,6 +135,11 @@ class Ajax extends CI_Controller {
     {
         echo $this->AjaxModel->htmlStyles($_POST['way']);
     }
+    
+    public function showCounts()
+    {
+        echo $this->CabinetModel->HtmlCounts();
+    }
 
     public function test()
     {
