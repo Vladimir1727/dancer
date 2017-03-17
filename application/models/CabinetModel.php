@@ -185,4 +185,39 @@ class CabinetModel extends CI_Model{
         }
         return $html;
     }
+    
+    public function selectWays()
+    {
+        $data=$this->getways();
+        $html='<option value="0">Выберите направление</option>';
+        foreach ($data as $d) {
+            $html.='<option value="'.$d['id'].'">';
+            $html.=$d['way'].'</option>';
+        }
+        return $html;
+    }
+    
+    public function getCounts()
+    {
+        $q=$this->db->query('select * from cat_count where deleted=0');
+        return $q->result_array();
+    }
+
+    public function htmlCounts()
+    {
+        $data=$this->getCounts();
+        $html="";
+        foreach ($data as $d) {
+            $html.='<tr>';
+            $html.='<td class="hidden">'.$d['id'].'</td>';
+            $html.='<td>'.$d['way'].'</td>';
+            $html.='<td><button class="btn btn-warning btn-sm edit" id="e'.$d['id']
+                    .'" data-toggle="modal" data-target="#editmodal">edit</button> ';
+            $html.='<button class="btn btn-danger btn-sm del" id="d'.$d['id'].'">delete</button></td>';
+            $html.='</tr>';
+        }
+        return $html;
+    }
+    
+    
 }

@@ -1,34 +1,47 @@
 (function($){$(function(){
+console.log('start');
+$('#style_block').hide();
+
+$('#way_select').change(function(){
+    var way=$('#way_select').val();
+    $('#way_id').val(way);
+    if(way == 0){
+        $('#style_block').hide();
+    }
+    else{
+        showStyles();
+        $('#style_block').show();
+    } 
+});
 
 $('#savemodal').click(function(){
     var data=$('#formmodal').serializeArray();
-    data[data.length]={name:'table',value:'ways'};
+    data[data.length]={name:'table',value:'styles'};
     $.ajax({
         url:'../ajax/save',
         type:'POST',
         data:data,
         success: function(data){
-            showWays();
+            console.log(data);
+            showStyles();
         }
     });
 });
 
 $('#new_but').click(function(){
     var data=$('#add_form').serializeArray();
-    data[data.length]={name:'table',value:'ways'};
+    data[data.length]={name:'table',value:'styles'};
     $.ajax({
         url:'../ajax/insert',
         type:'POST',
         data:data,
         success: function(data){
-            $('#new_way').val('');
-            showWays();
+            $('#new').val('');
+            showStyles();
         }
     });
     return false;
 });
-
-addClick();
 
 function addClick(){
     $('.edit').each(function(){//кнопка редактировать путь
@@ -37,11 +50,11 @@ function addClick(){
             $.ajax({
 		url:'../ajax/edit',
 		type:'POST',
-		data:'id='+id+'&table=ways',
+		data:'id='+id+'&table=styles',
 		success: function(data){
-                    var way=JSON.parse(data);
-                    $('#modalval').val(way.way);
-                    $('#id').val(way.id);
+                    var style=JSON.parse(data);
+                    $('#modalval').val(style.style);
+                    $('#id').val(style.id);
 		}
             });
 	});
@@ -53,21 +66,22 @@ function addClick(){
             $.ajax({
 		url:'../ajax/delete',
 		type:'POST',
-		data:'id='+id+'&table=ways',
+		data:'id='+id+'&table=styles',
 		success: function(data){
-                    showWays();
+                    showStyles();
 		}
             });
 	});
     });
 }
 
-function showWays(){
+function showStyles(){
     $.ajax({
-	url:'../ajax/showWays',
+	url:'../ajax/showStyles',
 	type:'POST',
+        data:'way='+$('#way_id').val(),
 	success: function(data){
-            $('#ways tbody').html(data);
+            $('#style_table tbody').html(data);
             addClick();
         }
     });

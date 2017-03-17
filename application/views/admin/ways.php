@@ -44,11 +44,11 @@
                 </tr>
             </thead>
         </table>
-        <form>
+        <form id="add_form">
             <div class="input-group">
-                <input type="text" placeholder="название..." id="new_way" class="form-control">
+                <input type="text" placeholder="название..." id="new_way" class="form-control" name="way">
                 <div class="input-group-btn">
-                    <input type="submit" value="добавить" class="btn btn-success">
+                    <input type="submit" value="добавить" class="btn btn-success" id="new_but">
                 </div>
             </div>
         </form>

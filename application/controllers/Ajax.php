@@ -101,6 +101,7 @@ class Ajax extends CI_Controller {
         }
         $ins=$this->AjaxModel->update($table,$id,$data);
         echo $ins;
+        //var_dump($data);
     }
     
     public function delete()
@@ -111,9 +112,28 @@ class Ajax extends CI_Controller {
         echo $res;
     }
     
+    public function insert()
+    {
+        $table=$_POST['table'];
+        $data=[];
+        $d=$_POST;
+        foreach ($d as $k => $v){
+            if ($k != 'table'){
+                $data[$k]=$v;
+            }
+        }
+        $ins=$this->AjaxModel->insert($table,$data);
+        echo $ins;
+    }
+    
     public function showWays()
     {
         echo $this->CabinetModel->htmlWays();
+    }
+    
+    public function showStyles()
+    {
+        echo $this->AjaxModel->htmlStyles($_POST['way']);
     }
 
     public function test()
