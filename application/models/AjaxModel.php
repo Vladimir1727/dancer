@@ -153,4 +153,34 @@ class AjaxModel extends CI_Model{
         }
         return $html;
     }
+    
+    public function getLigs($way)
+    {
+        $q=$this->db->query('select * from ligs where deleted=0 and way_id='.$way);
+        return $q->result_array();
+    }
+
+    public function htmlLigs($way)
+    {
+        $data=$this->getLigs($way);
+        $html="";
+        foreach ($data as $d) {
+            $html.='<tr>';
+            $html.='<td class="hidden">'.$d['id'].'</td>';
+            $html.='<td>'.$d['number'].'</td>';
+            $html.='<td>'.$d['name'].'</td>';
+            $html.='<td>'.$d['points'].'</td>';
+            if ($d['days'] > 0){
+                $html.='<td>'.$d['days'].'</td>';
+            } 
+            else {
+                $html.='<td>нет</td>';
+            }
+            $html.='<td><button class="btn btn-warning btn-sm edit" id="e'.$d['id']
+                    .'" data-toggle="modal" data-target="#editmodal">edit</button> ';
+            $html.='<button class="btn btn-danger btn-sm del" id="d'.$d['id'].'">delete</button></td>';
+            $html.='</tr>';
+        }
+        return $html;
+    }
 }

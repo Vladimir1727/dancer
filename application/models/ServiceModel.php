@@ -158,10 +158,12 @@ class ServiceModel extends CI_Model{
                         . 'name varchar(64),'
                         . 'points smallint,'
                         . 'days smallint default 0,'
+                        . 'way_id int,'
+                        . 'foreign key (way_id) references ways(id) on update cascade,'
                         . 'deleted tinyint default 0'
                         . ')default charset=utf8';
                 $this->db->query($ligs);
-                $statuses='create table statuses('
+                /*$statuses='create table statuses('
                         . 'id int not null auto_increment primary key,'
                         . 'status varchar (32)'
                         . ')default charset=utf8';
@@ -651,7 +653,7 @@ class ServiceModel extends CI_Model{
         $ways='insert into ways(way) values'
                 . '("Восточный танец"),'
                 . '("Современная хореография")';
-        $this->db->query($ways);
+        $this->db->query($ways);*/
         $q=$this->db->query('select * from ways');
         foreach ($q->result() as $row)
         {
@@ -662,7 +664,7 @@ class ServiceModel extends CI_Model{
                 $west = $row->id;
             }
         }
-        
+        /*
         $styles='insert into styles (style,way_id,dancers_count) values'
                 . '("Raqs el Sharqi",'.$east.',0),'
                 . '("Эстрадная Песня",'.$east.',1),'
@@ -719,28 +721,28 @@ class ServiceModel extends CI_Model{
                     . '("Формейшн",8,24),'
                     . '("Продакшн",25,1000)';
         $this->db->query($cat_count);*/
-        /*$ligs='insert into ligs (number, name, points, days) values'
-                . '(1, "Дебют",10,365),'
-                . '(2,"Начинающие",16,0),'
-                . '(3,"Продолжающие",20,0),'
-                . '(4,"Высшая лига",24,0),'
-                . '(5,"Любители",26,0),'
-                . '(6,"Открытая лига",22,0),'
-                . '(7,"Профессионалы",1000,0),'
-                . '(1,"Дебют",10,365),'
-                . '(2,"Открытая лига",22,0),'
-                . '(3,"Профессионалы",1000,0)';
+        $ligs='insert into ligs (number, name, points, days,way_id) values'
+                . '(1, "Дебют",10,365,'.$east.'),'
+                . '(2,"Начинающие",16,0,'.$east.'),'
+                . '(3,"Продолжающие",20,0,'.$east.'),'
+                . '(4,"Высшая лига",24,0,'.$east.'),'
+                . '(5,"Любители",26,0,'.$east.'),'
+                . '(6,"Открытая лига",22,0,'.$east.'),'
+                . '(7,"Профессионалы",1000,0,'.$east.'),'
+                . '(1,"Дебют",10,365,'.$west.'),'
+                . '(2,"Открытая лига",22,0,'.$west.'),'
+                . '(3,"Профессионалы",1000,0,'.$west.')';
         $this->db->query($ligs);
-           $statuses='insert into statuses (status) values'
+        /*   $statuses='insert into statuses (status) values'
                    . '("ON"),'
                    . '("OFF"),'
                    . '("PRE"),'
                    . '("CLOSE"),'
                    . '("DONE")';
-        $this->db->query($statuses);*/           
+        $this->db->query($statuses);           
         $showligs='insert into show_ligs(lig_id,count_id) values'
                 . '';
-        $this->db->query($showligs);
+        $this->db->query($showligs);*/
         return true;
 	}
 }
