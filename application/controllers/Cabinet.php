@@ -113,7 +113,15 @@ class Cabinet extends CI_Controller
         }
     }
 
-    
+    public function adminways() {
+        if ($this->session->admin != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $ways=$this->CabinetModel->htmlWays();
+            $this->load->view('admin/ways',['ways' => $ways]);
+        }
+    }
 
     public function test()
     {

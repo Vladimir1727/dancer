@@ -91,19 +91,38 @@ class AjaxModel extends CI_Model{
 
 	public function delRole($role)
 	{
-		$id=$this->session->id;
-		$update='update users set '.$role.'=0 where id='.$id;
-		$this->db->query($update);
-		$id=$this->session->set_userdata($role,0);
-		return 'deleted';
+            $id=$this->session->id;
+            $update='update users set '.$role.'=0 where id='.$id;
+            $this->db->query($update);
+            $id=$this->session->set_userdata($role,0);
+            return 'deleted';
 	}
 
 	public function addRole($role)
 	{
-		$id=$this->session->id;
-		$update='update users set '.$role.'=1 where id='.$id;
-		$this->db->query($update);
-		$id=$this->session->set_userdata($role,1);
-		return 'added';
+            $id=$this->session->id;
+            $update='update users set '.$role.'=1 where id='.$id;
+            $this->db->query($update);
+            $id=$this->session->set_userdata($role,1);
+            return 'added';
 	}
+        
+        public function getRow($table, $id)
+        {
+            $q = $this->db->query('select * from '.$table.' where id='.$id);
+            $res = $q->result_array();
+            return $res[0];
+        }
+        
+        public function update($table,$id,$data)
+        {
+            $this->db->where('id', $id);
+            return $this->db->update($table, $data);
+        }
+        
+        public function delete($table,$id)
+        {
+            $this->db->where('id', $id);
+            return $this->db->update($table, array('deleted'=>1));
+        }
 }

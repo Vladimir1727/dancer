@@ -4,9 +4,9 @@ class ServiceModel extends CI_Model{
 		$this->load->database();
 		$this->load->dbforge();
 	}
-
+    
 	function CreateTables(){
-		
+		/*
 		$this->dbforge->add_field('id');
 		$fields=array(
 			'first_name'=> array(
@@ -111,7 +111,8 @@ class ServiceModel extends CI_Model{
 		$bellydance='create table bellydance(
 			id int not null auto_increment primary key,
 			name varchar(32),
-			type tinyint
+			type tinyint,
+                        deleted  tinyint default 0
 		)';
 		$this->db->query($bellydance);
 		$dancer='create table dancers(
@@ -128,12 +129,57 @@ class ServiceModel extends CI_Model{
 		on update cascade
 		)default charset=utf8';
 		$this->db->query($dancer);
+                $ways='create table ways('
+                        . 'id int not null auto_increment primary key,'
+                        . 'way varchar(128),'
+                        .'deleted  tinyint default 0'
+                        . ')default charset=utf8';
+                $this->db->query($ways);
+                $styles='create table styles('
+                        . 'id int not null auto_increment primary key,'
+                        . 'style varchar(128),'
+                        . 'way_id int,'
+                        . 'foreign key (way_id) references ways(id) on update cascade,'
+                        . 'dancers_count tinyint default 0,'
+                        .'deleted  tinyint default 0'
+                        . ')default charset=utf8';
+                $this->db->query($styles);
+                $count_cat='create table cat_count('
+                        . 'id int not null auto_increment primary key,'
+                        . 'name varchar(64),'
+                        . 'min_count smallint,'
+                        . 'max_count smallint,'
+                        .'deleted  tinyint default 0'
+                        . ')default charset=utf8';
+                $this->db->query($count_cat);
+                $ligs='create table ligs('
+                        . 'id int not null auto_increment primary key,'
+                        . 'number tinyint default 0,'
+                        . 'name varchar(64),'
+                        . 'points smallint,'
+                        . 'days smallint default 0,'
+                        . 'deleted tinyint default 0'
+                        . ')default charset=utf8';
+                $this->db->query($ligs);
+                $statuses='create table statuses('
+                        . 'id int not null auto_increment primary key,'
+                        . 'status varchar (32)'
+                        . ')default charset=utf8';
+                $this->db->query($statuses);
+                $showLigs='create table show_ligs('
+                        . 'id int not null auto_increment primary key,'
+                        . 'lig_id int,'
+                        . 'foreign key (lig_id) references ligs(id) on update cascade,'
+                        . 'count_id int,'
+                        . 'foreign key (count_id) references cat_count(id) on update cascade'
+                        . ')default charset=utf8';
+                $this->db->query($showLigs);*/
 		return true;
 	}
 
 	public function Seed()
 	{
-		$admin= array(
+		/*$admin= array(
 			'first_name'=>'admin',
 			'last_name'=>'admin',
 			'father_name'=>'admin',
@@ -602,6 +648,99 @@ class ServiceModel extends CI_Model{
 		("нет членства",3)
 		';
 	$this->db->query($bellydance);
-		return true;
+        $ways='insert into ways(way) values'
+                . '("Восточный танец"),'
+                . '("Современная хореография")';
+        $this->db->query($ways);
+        $q=$this->db->query('select * from ways');
+        foreach ($q->result() as $row)
+        {
+            if ($row->way == "Восточный танец"){
+                $east = $row->id;
+            }
+            if ($row->way == "Современная хореография"){
+                $west = $row->id;
+            }
+        }
+        
+        $styles='insert into styles (style,way_id,dancers_count) values'
+                . '("Raqs el Sharqi",'.$east.',0),'
+                . '("Эстрадная Песня",'.$east.',1),'
+                . '("Фольклор",'.$east.',2),'
+                . '("Египетский Фольклор",'.$east.',1),'
+                . '("Неегипетский Фольклор",'.$east.',1),'
+                . '("Табла",'.$east.',1),'
+                . '("Шааби Балади",'.$east.',1),'
+                . '("Tribal",'.$east.',0),'
+                . '("Fusion",'.$east.',0),'
+                . '("Стрит-Шааби",'.$east.',1),'
+                . '("Шоу-Bellydance",'.$east.',0),'
+                . '("СТК",'.$east.',0),'
+                . '("Сценический танец",'.$east.',0),'
+                . '("Импровизация",'.$east.',1),'
+                . '("Импровизация под дарбуку",'.$east.',1),'
+                . '("Импровизация под оркестр",'.$east.',1),'
+                . '("Импровизация Балади",'.$east.',1),'
+                . '("Импровизация Бандари",'.$east.',1),'
+                . '("Импровизация Ирак",'.$east.',1),'
+                . '("Импровизация Марокко",'.$east.',1),'
+                . '("Импровизация Саиди",'.$east.',1),'
+                . '("Импровизация Халиджи",'.$east.',1),'
+                . '("Цыганский танец",'.$east.',0),'
+                . '("Индийский танец",'.$east.',1),'
+                . '("Табла Dance",'.$east.',2),'
+                . '("Синхронный танец",'.$east.',2),'
+                . '("СЭТ",'.$west.',0),'
+                . '("Dance Show",'.$west.',0),'
+                . '("Fantasy",'.$west.',0),'
+                . '("Современная хореография",'.$west.',0),'
+                . '("Народный танец",'.$west.',0),'
+                . '("Стилизованный народный танец",'.$west.',0),'
+                . '("Street Dance Revue",'.$west.',0),'
+                . '("Jazz",'.$west.',0),'
+                . '("Modern",'.$west.',0),'
+                . '("Contemporary",'.$west.',0),'
+                . '("Импровизация Contemporary",'.$west.',1),'
+                . '("Ballroom Show",'.$west.',0),'
+                . '("Latin Show",'.$west.',0),'
+                . '("Hip-Hop",'.$west.',0),'
+                . '("Импровизация Hip-Hop",'.$west.',1),'
+                . '("Jazz-Funk",'.$west.',0),'
+                . '("Импровизация Jazz-Funk",'.$west.',1),'
+                . '("Disco",'.$west.',0),'
+                . '("Импровизация Disco",'.$west.',1),'
+                . '("СТК",'.$west.',0)';
+        $this->db->query($styles);
+        $cat_count='insert into cat_count (name,min_count,max_count) values'
+                    . '("Соло",1,1),'
+                    . '("Дуэт",2,2),'
+                    . '("Трио",3,3),'
+                    . '("Малая группа",3,7),'
+                    . '("Формейшн",8,24),'
+                    . '("Продакшн",25,1000)';
+        $this->db->query($cat_count);*/
+        /*$ligs='insert into ligs (number, name, points, days) values'
+                . '(1, "Дебют",10,365),'
+                . '(2,"Начинающие",16,0),'
+                . '(3,"Продолжающие",20,0),'
+                . '(4,"Высшая лига",24,0),'
+                . '(5,"Любители",26,0),'
+                . '(6,"Открытая лига",22,0),'
+                . '(7,"Профессионалы",1000,0),'
+                . '(1,"Дебют",10,365),'
+                . '(2,"Открытая лига",22,0),'
+                . '(3,"Профессионалы",1000,0)';
+        $this->db->query($ligs);
+           $statuses='insert into statuses (status) values'
+                   . '("ON"),'
+                   . '("OFF"),'
+                   . '("PRE"),'
+                   . '("CLOSE"),'
+                   . '("DONE")';
+        $this->db->query($statuses);*/           
+        $showligs='insert into show_ligs(lig_id,count_id) values'
+                . '';
+        $this->db->query($showligs);
+        return true;
 	}
 }

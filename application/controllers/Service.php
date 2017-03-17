@@ -7,8 +7,15 @@ class Service extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->model('ServiceModel');
+                $this->load->model('Status');
 	}
 
+    public function test() {
+        $id=$this->Status->statusName("1");
+        echo "<pre>";
+        var_dump($id);
+        echo "</pre>";
+    }
 	     
     public function CreateTables()
     {

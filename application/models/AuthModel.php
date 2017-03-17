@@ -38,11 +38,11 @@ class AuthModel extends CI_Model{
 		}
 		else return false;
 	}
-
-	public function addorganizer($id, $city)
-	{
-		$this->db->insert('organizers', ['user_id' => $id, 'city_id' => $city]);
-	}
+        
+    public function addorganizer($id, $city)
+    {
+        $this->db->insert('organizers', ['user_id' => $id, 'city_id' => $city]);
+    }
 
     public function addcluber($id, $city, $title)
     {
