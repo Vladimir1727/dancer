@@ -181,7 +181,8 @@ class ServiceModel extends CI_Model{
                         . 'name varchar(64),'
                         . 'min_age tinyint,'
                         . 'max_age tinyint,'
-                        . 'dancers_count tinyint default 0'
+                        . 'dancers_count tinyint default 0,'
+                        . 'deleted tinyint default 0'
                         . ')default charset=utf8';
                 $this->db->query($age);
                 $reight='create table reight(

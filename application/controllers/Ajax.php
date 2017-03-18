@@ -146,6 +146,11 @@ class Ajax extends CI_Controller {
         echo $this->AjaxModel->htmlLigs($_POST['way']);
     }
     
+    public function showAges()
+    {
+        echo $this->CabinetModel->htmlAges();
+    }
+    
     public function test()
     {
     echo "TEST <br>";

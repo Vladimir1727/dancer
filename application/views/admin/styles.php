@@ -12,6 +12,11 @@
                 <form id="formmodal">
                     <input type="hidden" id="id" name="id">
                     <input type="text" class="form-control" id="modalval" name="style">
+                    <select class="form-control" id="edit_count" name="dancers_count">
+                        <option value="0">любое количество участников</option>
+                        <option value="1">соло</option>
+                        <option value="2">дуэты, трио, формейшен, продакшен</option>
+                    </select>
                     <input type="hidden" id="modaltype">
                     <input type="hidden" id="modalid">
                 </form>
@@ -38,11 +43,19 @@
                 <thead>
                     <tr>
                         <td>Стиль</td>
+                        <td>Огр.по кол-ву</td>
                         <td>действия</td>
                     </tr>
                 </thead>
             </table>
             <form id="add_form">
+                 <div class="col-md-7">
+                <select class="form-control" id="new_count" name="dancers_count">
+                        <option value="0">любое количество участников</option>
+                        <option value="1">соло</option>
+                        <option value="2">дуэты, трио, формейшен, продакшен</option>
+                </select>
+                </div>
                 <div class="input-group">
                     <input type="hidden" id="way_id" name="way_id">
                     <input type="text" placeholder="название..." id="new" class="form-control" name="style">

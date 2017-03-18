@@ -146,6 +146,17 @@ class AjaxModel extends CI_Model{
             $html.='<tr>';
             $html.='<td class="hidden">'.$d['id'].'</td>';
             $html.='<td>'.$d['style'].'</td>';
+            switch ($d['dancers_count']) {
+            case 0:
+                $html.='<td>все</td>';
+                break;
+            case 1:
+                $html.='<td>соло</td>';
+                break;
+            case 2:
+                $html.='<td>два и более</td>';
+                break;
+            }
             $html.='<td><button class="btn btn-warning btn-sm edit" id="e'.$d['id']
                     .'" data-toggle="modal" data-target="#editmodal">edit</button> ';
             $html.='<button class="btn btn-danger btn-sm del" id="d'.$d['id'].'">delete</button></td>';

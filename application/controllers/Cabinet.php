@@ -152,6 +152,16 @@ class Cabinet extends CI_Controller
             $this->load->view('admin/ligs',['ways' => $ways]);
         }
     }
+    
+    public function adminages() {
+        if ($this->session->admin != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $ages=$this->CabinetModel->htmlAges();
+            $this->load->view('admin/ages',['ages' => $ages]);
+        }
+    }
 
     public function test()
     {

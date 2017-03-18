@@ -1,97 +1,85 @@
 (function($){$(function(){
-console.log('start');
-$('#style_block').hide();
-
-$('#way_select').change(function(){
-    var way=$('#way_select').val();
-    $('#way_id').val(way);
-    if(way == 0){
-        $('#style_block').hide();
-    }
-    else{
-        showStyles();
-        $('#style_block').show();
-    } 
-});
 
 $('#savemodal').click(function(){
     var data=$('#formmodal').serializeArray();
-    data[data.length]={name:'table',value:'styles'};
+    data[data.length]={name:'table',value:'cat_age'};
     $.ajax({
         url:'../ajax/save',
         type:'POST',
         data:data,
         success: function(data){
-            console.log(data);
-            showStyles();
+             show();
         }
     });
 });
 
 $('#new_but').click(function(){
     var data=$('#add_form').serializeArray();
-    data[data.length]={name:'table',value:'styles'};
+    data[data.length]={name:'table',value:'cat_age'};
     $.ajax({
         url:'../ajax/insert',
         type:'POST',
         data:data,
         success: function(data){
-            $('#new').val('');
-             $('#new_count option').each(function(){
-                 $(this).removeAttr('selected');
-             });
-            showStyles();
+            $('#new_name').val('');
+            $('#new_min').val('');
+            $('#new_max').val('');
+            $('#new_count').val(0);
+            show();
         }
     });
     return false;
 });
 
+addClick();
+
 function addClick(){
-    $('.edit').each(function(){//кнопка редактировать путь
+    $('.edit').each(function(){//кнопка редактировать
 	$(this).click(function(){
             var id=$(this).attr('id').substr(1);
             $.ajax({
 		url:'../ajax/edit',
 		type:'POST',
-		data:'id='+id+'&table=styles',
+		data:'id='+id+'&table=cat_age',
 		success: function(data){
-                    var style=JSON.parse(data);
-                    $('#modalval').val(style.style);
-                    $('#id').val(style.id);
+                var modal=JSON.parse(data);
+                    $('#edit_name').val(modal.name);
+                    $('#edit_min').val(modal.min_age);
+                    $('#edit_max').val(modal.max_age);
                     $('#edit_count option').each(function(){
-                        if ($(this).val()==style.dancers_count){
+                        if ($(this).val()==modal.dancers_count){
                             $(this).attr('selected','selected');
                         }else{
                             $(this).removeAttr('selected');
                         }
                     });
+                    $('#id').val(modal.id);
 		}
             });
 	});
     });
     
-    $('.del').each(function(){//кнопка удалить путь
+    $('.del').each(function(){//кнопка удалить
 	$(this).click(function(){
             var id=$(this).attr('id').substr(1);
             $.ajax({
 		url:'../ajax/delete',
 		type:'POST',
-		data:'id='+id+'&table=styles',
+		data:'id='+id+'&table=cat_age',
 		success: function(data){
-                    showStyles();
+                    show();
 		}
             });
 	});
     });
 }
 
-function showStyles(){
+function show(){
     $.ajax({
-	url:'../ajax/showStyles',
+	url:'../ajax/showAges',
 	type:'POST',
-        data:'way='+$('#way_id').val(),
-	success: function(data){
-            $('#style_table tbody').html(data);
+        success: function(data){
+            $('#list tbody').html(data);
             addClick();
         }
     });
