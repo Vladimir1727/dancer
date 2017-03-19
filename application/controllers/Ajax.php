@@ -108,8 +108,15 @@ class Ajax extends CI_Controller {
     {
         $table=$_POST['table'];
         $id=$_POST['id'];
-        $res=$this->AjaxModel->delete($table,$id);
-        echo $res;
+		if (isset($_POST['soft'])){
+			$soft=(bool)$_POST['soft'];
+		}else{
+			$soft=true;
+		}
+        $res=$this->AjaxModel->delete($table,$id,$soft);
+        echo $soft.'<br>';
+		echo $res;
+		
     }
     
     public function insert()
@@ -145,10 +152,20 @@ class Ajax extends CI_Controller {
     {
         echo $this->AjaxModel->htmlLigs($_POST['way']);
     }
+	
+	public function selectLigs()
+    {
+        echo $this->AjaxModel->selectLigs($_POST['way']);
+    }
     
     public function showAges()
     {
         echo $this->CabinetModel->htmlAges();
+    }
+	
+	public function showAgeLig()
+    {
+        echo $this->AjaxModel->htmlAgeLig($_POST['way']);
     }
     
     public function test()

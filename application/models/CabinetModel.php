@@ -255,4 +255,14 @@ class CabinetModel extends CI_Model{
         }
         return $html;
     }
+	
+	public function selectAges()
+    {
+        $data=$this->getAges();
+        $html="";
+        foreach ($data as $d) {
+            $html.='<option value='.$d['id'].'>'.$d['name'].'</option>';
+        }
+        return $html;
+    }
 }

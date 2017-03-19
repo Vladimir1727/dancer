@@ -756,7 +756,7 @@ class ServiceModel extends CI_Model{
                    . '("PRE"),'
                    . '("CLOSE"),'
                    . '("DONE")';
-        $this->db->query($statuses);*/           
+        $this->db->query($statuses);          
         $showligs='insert into show_ligs(lig_id,age_id) values
                 ((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Восточный танец")),
 				(select id from cat_age where name="Мини-беби")),
@@ -892,7 +892,7 @@ class ServiceModel extends CI_Model{
 				(select id from cat_age where name="Грандсиньорины"))
 				';
         $this->db->query($showligs);
-        /*$age='insert into cat_age (name,min_age,max_age,dancers_count) values'
+        $age='insert into cat_age (name,min_age,max_age,dancers_count) values'
                 . '("Мини-беби",2,5,0),'
                 . '("Беби",6,7,0),'
                 . '("Мини-беби+Беби",2,7,2),'

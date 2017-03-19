@@ -125,10 +125,14 @@ class AjaxModel extends CI_Model{
         return $this->db->insert($table, $data);
     }
 
-    public function delete($table,$id)
+    public function delete($table,$id,$soft)
     {
-        $this->db->where('id', $id);
-        return $this->db->update($table, array('deleted'=>1));
+		if ($soft){
+            $this->db->where('id', $id);
+            return $this->db->update($table, array('deleted'=>1));
+		}else{
+			return $this->db->delete($table, array('id' => $id));
+	    }
     }
     
     public function getStyles($way)
@@ -191,6 +195,35 @@ class AjaxModel extends CI_Model{
                     .'" data-toggle="modal" data-target="#editmodal">edit</button> ';
             $html.='<button class="btn btn-danger btn-sm del" id="d'.$d['id'].'">delete</button></td>';
             $html.='</tr>';
+        }
+        return $html;
+    }
+	
+	public function htmlAgeLig($way)
+    {
+		$q=$this->db->query('select s.id, a.name as age, a.min_age, a.max_age, l.name as lig
+		from ligs l, cat_age a, show_ligs s
+		where s.lig_id=l.id and s.age_id=a.id and l.way_id='.$way.'
+		order by s.age_id');
+        $data = $q->result_array();
+        $html="";
+        foreach ($data as $d) {
+            $html.='<tr>';
+            $html.='<td class="hidden">'.$d['id'].'</td>';
+            $html.='<td>'.$d['age'].' ('.$d['min_age'].'-'.$d['max_age'].' лет)</td>';
+            $html.='<td>'.$d['lig'].'</td>';
+            $html.='<td><button class="btn btn-danger btn-sm del" id="d'.$d['id'].'">delete</button></td>';
+            $html.='</tr>';
+        }
+        return $html;
+    }
+	
+	public function selectLigs($way)
+    {
+        $data=$this->getLigs($way);
+        $html="";
+        foreach ($data as $d) {
+            $html.='<option value='.$d['id'].'>'.$d['name'].'</option>';
         }
         return $html;
     }
