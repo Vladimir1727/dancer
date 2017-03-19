@@ -163,20 +163,20 @@ class ServiceModel extends CI_Model{
                         . 'deleted tinyint default 0'
                         . ')default charset=utf8';
                 $this->db->query($ligs);
-                /*$statuses='create table statuses('
+                $statuses='create table statuses('
                         . 'id int not null auto_increment primary key,'
                         . 'status varchar (32)'
                         . ')default charset=utf8';
-                $this->db->query($statuses);
+                $this->db->query($statuses);*/
                 $showLigs='create table show_ligs('
                         . 'id int not null auto_increment primary key,'
                         . 'lig_id int,'
                         . 'foreign key (lig_id) references ligs(id) on update cascade,'
-                        . 'count_id int,'
-                        . 'foreign key (count_id) references cat_count(id) on update cascade'
+                        . 'age_id int,'
+                        . 'foreign key (age_id) references cat_age(id) on update cascade'
                         . ')default charset=utf8';
                 $this->db->query($showLigs);
-                $age='create table cat_age('
+                /*$age='create table cat_age('
                         . 'id int not null auto_increment primary key,'
                         . 'name varchar(64),'
                         . 'min_age tinyint,'
@@ -670,7 +670,7 @@ class ServiceModel extends CI_Model{
         $ways='insert into ways(way) values'
                 . '("Восточный танец"),'
                 . '("Современная хореография")';
-        $this->db->query($ways);*/
+        $this->db->query($ways);
         $q=$this->db->query('select * from ways');
         foreach ($q->result() as $row)
         {
@@ -681,7 +681,7 @@ class ServiceModel extends CI_Model{
                 $west = $row->id;
             }
         }
-        /*
+        
         $styles='insert into styles (style,way_id,dancers_count) values'
                 . '("Raqs el Sharqi",'.$east.',0),'
                 . '("Эстрадная Песня",'.$east.',1),'
@@ -750,17 +750,149 @@ class ServiceModel extends CI_Model{
                 . '(2,"Открытая лига",22,0,'.$west.'),'
                 . '(3,"Профессионалы",1000,0,'.$west.')';
         $this->db->query($ligs);
-        /*   $statuses='insert into statuses (status) values'
+        $statuses='insert into statuses (status) values'
                    . '("ON"),'
                    . '("OFF"),'
                    . '("PRE"),'
                    . '("CLOSE"),'
                    . '("DONE")';
-        $this->db->query($statuses);           
-        $showligs='insert into show_ligs(lig_id,count_id) values'
-                . '';
+        $this->db->query($statuses);*/           
+        $showligs='insert into show_ligs(lig_id,age_id) values
+                ((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Мини-беби")),
+				((select id from ligs where name="Начинающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Мини-беби")),
+				((select id from ligs where name="Продолжающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Мини-беби")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Беби")),
+				((select id from ligs where name="Начинающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Беби")),
+				((select id from ligs where name="Продолжающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Беби")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Ювеналы 1")),
+				((select id from ligs where name="Начинающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Ювеналы 1")),
+				((select id from ligs where name="Продолжающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Ювеналы 1")),
+				((select id from ligs where name="Высшая лига" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Ювеналы 1")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Юниоры 2")),
+				((select id from ligs where name="Начинающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Юниоры 2")),
+				((select id from ligs where name="Продолжающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Юниоры 2")),
+				((select id from ligs where name="Высшая лига" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Юниоры 2")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Юниоры 1")),
+				((select id from ligs where name="Начинающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Юниоры 1")),
+				((select id from ligs where name="Продолжающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Юниоры 1")),
+				((select id from ligs where name="Высшая лига" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Юниоры 1")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Юниоры 2")),
+				((select id from ligs where name="Начинающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Юниоры 2")),
+				((select id from ligs where name="Продолжающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Юниоры 2")),
+				((select id from ligs where name="Высшая лига" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Юниоры 2")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Молодёжь")),
+				((select id from ligs where name="Начинающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Молодёжь")),
+				((select id from ligs where name="Продолжающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Молодёжь")),
+				((select id from ligs where name="Любители" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Молодёжь")),
+				((select id from ligs where name="Профессионалы" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Молодёжь")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Взрослые")),
+				((select id from ligs where name="Начинающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Взрослые")),
+				((select id from ligs where name="Продолжающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Взрослые")),
+				((select id from ligs where name="Любители" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Взрослые")),
+				((select id from ligs where name="Профессионалы" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Взрослые")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Синьорины")),
+				((select id from ligs where name="Начинающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Синьорины")),
+				((select id from ligs where name="Продолжающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Синьорины")),
+				((select id from ligs where name="Любители" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Синьорины")),
+				((select id from ligs where name="Профессионалы" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Синьорины")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Грандсиньорины")),
+				((select id from ligs where name="Начинающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Грандсиньорины")),
+				((select id from ligs where name="Продолжающие" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Грандсиньорины")),
+				((select id from ligs where name="Любители" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Грандсиньорины")),
+				((select id from ligs where name="Профессионалы" and way_id=(select id from ways where way="Восточный танец")),
+				(select id from cat_age where name="Грандсиньорины")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Мини-беби")),
+				((select id from ligs where name="Открытая лига" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Мини-беби")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Беби")),
+				((select id from ligs where name="Открытая лига" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Беби")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Ювеналы 1")),
+				((select id from ligs where name="Открытая лига" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Ювеналы 1")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Ювеналы 2")),
+				((select id from ligs where name="Открытая лига" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Ювеналы 2")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Юниоры 1")),
+				((select id from ligs where name="Открытая лига" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Юниоры 1")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Юниоры 2")),
+				((select id from ligs where name="Открытая лига" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Юниоры 2")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Молодёжь")),
+				((select id from ligs where name="Открытая лига" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Молодёжь")),
+				((select id from ligs where name="Профессионалы" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Молодёжь")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Взрослые")),
+				((select id from ligs where name="Открытая лига" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Взрослые")),
+				((select id from ligs where name="Профессионалы" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Взрослые")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Синьорины")),
+				((select id from ligs where name="Открытая лига" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Синьорины")),
+				((select id from ligs where name="Профессионалы" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Синьорины")),
+				((select id from ligs where name="Дебют" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Грандсиньорины")),
+				((select id from ligs where name="Открытая лига" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Грандсиньорины")),
+				((select id from ligs where name="Профессионалы" and way_id=(select id from ways where way="Современная хореография")),
+				(select id from cat_age where name="Грандсиньорины"))
+				';
         $this->db->query($showligs);
-        $age='insert into cat_age (name,min_age,max_age,dancers_count) values'
+        /*$age='insert into cat_age (name,min_age,max_age,dancers_count) values'
                 . '("Мини-беби",2,5,0),'
                 . '("Беби",6,7,0),'
                 . '("Мини-беби+Беби",2,7,2),'
