@@ -150,6 +150,43 @@ class Ajax extends CI_Controller {
     {
         echo $this->CabinetModel->htmlAges();
     }
+	
+    public function showAgeLig()
+    {
+        echo $this->AjaxModel->htmlAgeLig($_POST['way']);
+    }
+    
+    public function dancerInfo() 
+    {
+        $id=$_POST['id'];
+        $res=$this->AjaxModel->getDancer($id);
+        echo json_encode($res[0]);
+    }
+    
+    public function saveDancer()
+    {
+        $data=$_POST;
+        $ins=$this->AjaxModel->updateDancer($data);
+        echo $ins;
+    }
+    
+    public function showTrainerDancers()
+    {   
+        $trainer_id=$this->session->id;
+        echo $this->CabinetModel->htmlTrainerDancers($trainer_id);
+    }
+    
+    public function deactivateDancer()
+    {   
+        $id=$_POST['id'];
+        echo $this->AjaxModel->deactivateDancer($id);
+    }
+    
+    public function activateDancer()
+    {   
+        $id=$_POST['id'];
+        echo $this->AjaxModel->activateDancer($id);
+    }
     
     public function test()
     {

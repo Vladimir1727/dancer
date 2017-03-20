@@ -194,4 +194,82 @@ class AjaxModel extends CI_Model{
         }
         return $html;
     }
+	
+    public function htmlAgeLig($way)
+    {
+		$q=$this->db->query('select s.id, a.name as age, a.min_age, a.max_age, l.name as lig
+		from ligs l, cat_age a, show_ligs s
+		where s.lig_id=l.id and s.age_id=a.id and l.way_id='.$way.'
+		order by s.age_id');
+        $data = $q->result_array();
+        $html="";
+        foreach ($data as $d) {
+            $html.='<tr>';
+            $html.='<td class="hidden">'.$d['id'].'</td>';
+            $html.='<td>'.$d['age'].' ('.$d['min_age'].'-'.$d['max_age'].' лет)</td>';
+            $html.='<td>'.$d['lig'].'</td>';
+            $html.='<td><button class="btn btn-danger btn-sm del" id="d'.$d['id'].'">delete</button></td>';
+            $html.='</tr>';
+        }
+        return $html;
+    }
+	
+    public function selectLigs($way)
+    {
+        $data=$this->getLigs($way);
+        $html="";
+        foreach ($data as $d) {
+            $html.='<option value='.$d['id'].'>'.$d['name'].'</option>';
+        }
+        return $html;
+    }
+    
+    public function getDancer($id) {
+        $q=$this->db->query('select u.first_name, u.last_name, u.father_name, u.email, u.password,'
+                . ' d.birthdate, u.dancer, u.phone, d.id, d.user_id, b.name as bell, d.bell_id'
+                . ' from users u, dancers d, bellydance b'
+                . ' where d.user_id=u.id and d.bell_id=b.id and d.id='.$id);
+        $res=$q->result_array();
+        $ytime = time() - strtotime($res[0]['birthdate']);
+        $res[0]['year'] = ($ytime - $ytime % 31556926) / 31556926;
+        return $res;
+    }
+    
+    public function updateDancer($data)
+    {
+        $dancer=array(
+            'birthdate'=>$data['birthdate'],
+            'bell_id'=>$data['bell_id'],
+        );
+        $this->db->where('id', $data['id']);
+        $this->db->update('dancers', $dancer);
+        $user=array(
+            'last_name'=>$data['last_name'],
+            'first_name'=>$data['first_name'],
+            'father_name'=>$data['father_name'],
+            'password'=>$data['password'],
+            'email'=>$data['email'],
+            'phone'=>$data['phone'],
+            'dancer'=>$data['dancer'],
+        );
+        $this->db->where('id', $data['user_id']);
+        $this->db->update('users', $user);
+        return true;
+    }
+    
+    public function deactivateDancer($id)
+    {
+        $this->db->query('update users'
+                . ' set dancer=3'
+                . ' where id=(select user_id from dancers where id='.$id.')');
+        return true;
+    }
+    
+    public function activateDancer($id)
+    {
+        $this->db->query('update users'
+                . ' set dancer=2'
+                . ' where id=(select user_id from dancers where id='.$id.')');
+        return true;
+    }
 }

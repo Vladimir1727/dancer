@@ -31,7 +31,8 @@ class Cabinet extends CI_Controller
         else {
             $dancer = $this->CabinetModel->is_dancer($this->session->id);
             if ($dancer) {
-                $this->load->view('dancer/index');
+                $contact=$this->CabinetModel->dancerContact();
+                $this->load->view('dancer/index',['contact'=>$contact]);
             }
             else {
                 $regions = $this->CabinetModel->regions_html();
@@ -160,6 +161,39 @@ class Cabinet extends CI_Controller
         else {
             $ages=$this->CabinetModel->htmlAges();
             $this->load->view('admin/ages',['ages' => $ages]);
+        }
+    }
+
+    public function adminagelig() {
+        if ($this->session->admin != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+                        $ages=$this->CabinetModel->selectAges();
+            $ways=$this->CabinetModel->selectWays();
+            $this->load->view('admin/ligage',['ways'=>$ways,'ages'=>$ages]);
+        }
+    }
+    
+    public function trainercontact() {
+        if ($this->session->trainer != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $contact=$this->CabinetModel->trainerContact();
+            $this->load->view('trainer/contact',['contact'=>$contact]);
+        }
+    }
+    
+    public function trainerdancers() {
+        if ($this->session->trainer != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $belly = $this->CabinetModel->bellyHtml();
+            $trainer_id=$this->session->id;
+            $dancers=$this->CabinetModel->htmlTrainerDancers($trainer_id);
+            $this->load->view('trainer/dancers',['dancers'=>$dancers,'belly'=>$belly]);
         }
     }
 
