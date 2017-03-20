@@ -1,5 +1,4 @@
 <?php $this->load->view('header');?>
-<h1 class="h1 text-success">Кабинет Танцора</h1>
 <div id="editmodal" class="modal fade" role="dialog">
     <div class="modal-dialog">
     <!-- Modal content-->
@@ -86,52 +85,52 @@
 </div>
 <!-- End Modal -->
 
-<h1 class="h1 text-success">Контакты</h1>
-<div class="row">
-    <div class="col-md-4">
-        <p>
-            <strong>Мои:</strong>
-            <?php echo $contact['dancer_name'];?>
-        </p>
-        <p>
-            E-mail: <?php echo $contact['dancer_email'];?>
-        </p>
-        <p>
-            Телефон: <?php echo $contact['dancer_phone'];?>
-        </p>
-        <p>
-            Дата рождения: <?php echo $contact['dancer_birthdate'];?>
-        </p>
-        <button class="btn btn-warning">Изменить</button>
-    </div>
-    <div class="col-md-4">
-        <p>
-            <strong>Тренер:</strong>
-            <?php echo $contact['trainer_name'];?>
-        </p>
-        <p>
-            E-mail: <?php echo $contact['trainer_email'];?>
-        </p>
-        <p>
-            Телефон: <?php echo $contact['trainer_phone'];?>
-        </p>
-    </div>
-    <div class="col-md-4">
-        <p>
-            <strong>Клуб:</strong>
-            <?php echo $contact['club_title'];?>
-        </p>
-        <p>
-            <strong>Руководитель:</strong>
-            <?php echo $contact['club_name'];?>
-        </p>
-        <p>
-            E-mail: <?php echo $contact['club_email'];?>
-        </p>
-        <p>
-            Телефон: <?php echo $contact['club_phone'];?>
-        </p>
+<div id="infomodal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+    <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Информация</h4>
+            </div>
+            <div class="modal-body">
+                <p>Фамилия: <span id="i_last_name"></span></p>
+                <p>Имя: <span id="i_first_name"></span></p>
+                <p>Отчество: <span id="i_father_name"></span></p>
+                <p>Телефон: <span id="i_phone"></span></p>
+                <p>E-mail: <span id="i_email"></span></p>
+                <p>Пароль: <span id="i_password"></span></p>
+                <p>Организация: <span id="i_bell"></span></p>
+                <p>Дата рождения: <span id="i_birthdate"></span></p>
+                <p>Полных лет: <span id="i_year"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
     </div>
 </div>
-<?php $this->load->view('footer'); ?>
+<!-- End Modal -->
+
+<?php include_once 'menu.php';?>
+<h1 class="h1 text-success">Танцоры</h1>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped" id="dancers_table">
+            <tbody>
+                <?php echo $dancers; ?>
+            </tbody>
+            <thead>
+                <tr>
+                    <th>Ф.И.О.</th>
+                    <th>возраст лет</th>
+                    <th>статус</th>
+                    <th>контакт</th>
+                    <th>действия</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<script src="<?php echo base_url(); ?>/js/trainer_dancers.js"></script>
 <?php $this->load->view('footer'); ?>

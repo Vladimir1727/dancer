@@ -138,7 +138,7 @@ class CabinetModel extends CI_Model{
     public function bellyHtml()
     {
         $belly=$this->getBelly();
-        $html="";
+        $html='';
         foreach ($belly as $b) {
             $html.='<option value="'.$b['id'].'">'.$b['name'].'</option>';
         }
@@ -256,7 +256,7 @@ class CabinetModel extends CI_Model{
         return $html;
     }
 	
-	public function selectAges()
+    public function selectAges()
     {
         $data=$this->getAges();
         $html="";
@@ -264,5 +264,95 @@ class CabinetModel extends CI_Model{
             $html.='<option value='.$d['id'].'>'.$d['name'].'</option>';
         }
         return $html;
+    }
+    
+    public function trainerContact()
+    {
+        $q=$this->db->query('select u.first_name, u.last_name, u.father_name, u.email, u.phone '
+                . 'from users u, trainers t '
+                . 'where u.id=t.user_id and t.user_id='.$this->session->id);
+        $t=$q->result_array();
+        $q=$this->db->query('select u.first_name, u.last_name, u.father_name, u.email, u.phone, c.title'
+                . ' from users u, trainers t , clubers c'
+                . ' where u.id=c.user_id and t.club_id=c.id and t.user_id='.$this->session->id);
+        $c=$q->result_array();
+        $data=array(
+            'trainer_name'=>$t[0]['last_name'].' '.$t[0]['first_name'].' '.$t[0]['father_name'],
+            'trainer_email'=>$t[0]['email'],
+            'trainer_phone'=>$t[0]['phone'],
+            'club_name'=>$c[0]['last_name'].' '.$c[0]['first_name'].' '.$c[0]['father_name'],
+            'club_email'=>$c[0]['email'],
+            'club_phone'=>$c[0]['phone'],
+            'club_title'=>$c[0]['title'],
+        );
+        return $data;
+    }
+    
+    function htmlTrainerDancers($trainer_id) {
+        $q = $this->db->query('select u.first_name, u.last_name, u.phone, u.email, u.dancer,'
+                . ' d.id, d.birthdate'
+                . ' from users u, dancers d'
+                . ' where u.id=d.user_id and trainer_id='
+                . '(select id from trainers where user_id='.$trainer_id.')');
+        $html='';
+        foreach ($q->result() as $r)
+        {
+            $html .= '<tr>';
+            $html .= '<td class="hidden">'.$r->id.'</td>';
+            $html .= '<td>'.$r->last_name.' '.$r->first_name.'</td>';
+            $birth =  strtotime($r->birthdate);
+            $ytime = time() - $birth;
+            $year = ($ytime - $ytime % 31556926) / 31556926;
+            $html .= '<td>'.$year.'</td>';
+            if ($r->dancer == 0) $html .= '<td> нет </td>';
+            if ($r->dancer == 1) $html .= '<td> запрошен </td>';
+            if ($r->dancer == 2) $html .= '<td> активный </td>';
+            if ($r->dancer == 3) $html .= '<td> заблокирован </td>';
+            $html .= '<td>'.$r->email.' '.$r->phone.'</td>';
+            $html.='<td><button class="btn btn-info btn-sm info" id="i'.$r->id
+                    .'" data-toggle="modal" data-target="#infomodal">info</button> ';
+            $html.='<button class="btn btn-warning btn-sm edit" id="e'.$r->id
+                    .'" data-toggle="modal" data-target="#editmodal">edit</button> ';
+            if ($r->dancer != 2 ){
+                $html.='<button class="btn btn-success btn-sm activate" id="a'.
+                        $r->id.'">activate</button></td>';
+            }
+            if ($r->dancer == 1 ||  $r->dancer == 2){
+                $html.='<button class="btn btn-danger btn-sm deactivate" id="d'.
+                        $r->id.'">delactivate</button></td>';
+            }
+            $html .= '</tr>';
+        }
+        return $html;
+    }
+    
+    public function dancerContact()
+    {
+        $q=$this->db->query('select u.first_name, u.last_name, u.father_name, u.email, u.phone '
+                . 'from users u, trainers t '
+                . 'where u.id=t.user_id and t.user_id='.$this->session->id);
+        $t=$q->result_array();
+        $q=$this->db->query('select u.first_name, u.last_name, u.father_name, u.email, u.phone, c.title'
+                . ' from users u, trainers t , clubers c'
+                . ' where u.id=c.user_id and t.club_id=c.id and t.user_id='.$this->session->id);
+        $c=$q->result_array();
+        $q=$this->db->query('select u.first_name, u.last_name, u.father_name, u.email, u.phone, d.birthdate'
+                . ' from users u, dancers d'
+                . ' where u.id=d.user_id and d.user_id='.$this->session->id);
+        $d=$q->result_array();
+        $data=array(
+            'trainer_name'=>$t[0]['last_name'].' '.$t[0]['first_name'].' '.$t[0]['father_name'],
+            'trainer_email'=>$t[0]['email'],
+            'trainer_phone'=>$t[0]['phone'],
+            'club_name'=>$c[0]['last_name'].' '.$c[0]['first_name'].' '.$c[0]['father_name'],
+            'club_email'=>$c[0]['email'],
+            'club_phone'=>$c[0]['phone'],
+            'club_title'=>$c[0]['title'],
+            'dancer_name'=>$d[0]['last_name'].' '.$c[0]['first_name'].' '.$c[0]['father_name'],
+            'dancer_email'=>$d[0]['email'],
+            'dancer_phone'=>$d[0]['phone'],
+            'dancer_birthdate'=>$d[0]['birthdate'],
+        );
+        return $data;
     }
 }
