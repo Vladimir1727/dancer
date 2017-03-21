@@ -48,33 +48,7 @@
                             <input type="text" id="e_phone" name="phone" placeholder="телефон..." class="form-control input-sm">
                         </label>
                     </div>
-                    <div class="form-group">
-                        <label>
-                            День рождния
-                            <input type="date" id="e_birthdate" name="birthdate" placeholder="дата рождения..." class="form-control input-sm">
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            Ассоциация
-                            <select class="form-control" id="e_bell" name="bell_id">
-                                <option value="0" selected>Выберите организацию</option>
-                                <?php echo $belly; ?>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            Статус
-                            <select class="form-control" id="e_status" name="dancer">
-                                <option value="-1">Выберите статус</option>
-                                <option value="0">нет</option>
-                                <option value="1">запрошен</option>
-                                <option value="2">активный</option>
-                                <option value="3">закрыт</option>
-                            </select>
-                        </label>
-                    </div>
+                   
                 </form>
             </div>
             <br>
@@ -86,23 +60,30 @@
 </div>
 <!-- End Modal -->
 
-<h1 class="h1 text-success">Контакты</h1>
 <div class="row">
     <div class="col-md-4">
         <p>
             <strong>Мои:</strong>
-            <?php echo $contact['dancer_name'];?>
+            <span id="name"><?php echo $contact['dancer_name'];?></span>
         </p>
         <p>
-            E-mail: <?php echo $contact['dancer_email'];?>
+            E-mail: 
+            <span id="email"><?php echo $contact['dancer_email'];?></span>
         </p>
         <p>
-            Телефон: <?php echo $contact['dancer_phone'];?>
+            Телефон: 
+            <span id="phone"><?php echo $contact['dancer_phone'];?></span>
         </p>
         <p>
-            Дата рождения: <?php echo $contact['dancer_birthdate'];?>
+            Дата рождения: 
+            <span id="birthdate"><?php echo $contact['dancer_birthdate'];?></span>
         </p>
-        <button class="btn btn-warning">Изменить</button>
+        <input type="hidden" id="dancer_id" name="id" value="<?php echo $contact['dancer_id']; ?>">
+        <button class="btn btn-warning" data-toggle="modal" data-target="#editmodal" id="edit_but">
+            Изменить
+        </button>
+
+        
     </div>
     <div class="col-md-4">
         <p>
@@ -133,5 +114,5 @@
         </p>
     </div>
 </div>
-<?php $this->load->view('footer'); ?>
+<script src="<?php echo base_url(); ?>/js/dancer_contact.js"></script>
 <?php $this->load->view('footer'); ?>

@@ -156,7 +156,7 @@ class Ajax extends CI_Controller {
         echo $this->AjaxModel->htmlAgeLig($_POST['way']);
     }
     
-    public function dancerInfo() 
+    public function dancerInfo()
     {
         $id=$_POST['id'];
         $res=$this->AjaxModel->getDancer($id);
@@ -167,7 +167,8 @@ class Ajax extends CI_Controller {
     {
         $data=$_POST;
         $ins=$this->AjaxModel->updateDancer($data);
-        echo $ins;
+        var_dump($ins);
+        //echo $ins;
     }
     
     public function showTrainerDancers()

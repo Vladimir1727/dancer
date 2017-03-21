@@ -38,7 +38,7 @@ class CabinetModel extends CI_Model{
 
 	public function is_organizer($id)
 	{
-		$q=$this->db->query('select id from organizers');
+		$q=$this->db->query('select id from organizers where user_id='.$id);
 		if ($q->result()){
 			return true;
 		}
@@ -49,7 +49,7 @@ class CabinetModel extends CI_Model{
 
     public function is_cluber($id)
     {
-        $q = $this->db->query('select id from clubers');
+        $q = $this->db->query('select id from clubers where user_id='.$id);
         if ($q->result()) {
             return true;
         }
@@ -60,7 +60,7 @@ class CabinetModel extends CI_Model{
 
     public function is_trainer($id)
     {
-        $q = $this->db->query('select id from trainers');
+        $q = $this->db->query('select id from trainers where user_id='.$id);
         if ($q->result()) {
             return true;
         }
@@ -71,7 +71,7 @@ class CabinetModel extends CI_Model{
 
     public function is_dancer($id)
     {
-        $q = $this->db->query('select id from dancers');
+        $q = $this->db->query('select id from dancers where user_id='.$id);
         if ($q->result()) {
             return true;
         }
@@ -336,7 +336,8 @@ class CabinetModel extends CI_Model{
                 . ' from users u, trainers t , clubers c'
                 . ' where u.id=c.user_id and t.club_id=c.id and t.user_id='.$this->session->id);
         $c=$q->result_array();
-        $q=$this->db->query('select u.first_name, u.last_name, u.father_name, u.email, u.phone, d.birthdate'
+        $q=$this->db->query('select u.first_name, u.last_name, u.father_name, u.email, u.phone, '
+                . 'd.birthdate, d.id'
                 . ' from users u, dancers d'
                 . ' where u.id=d.user_id and d.user_id='.$this->session->id);
         $d=$q->result_array();
@@ -348,6 +349,7 @@ class CabinetModel extends CI_Model{
             'club_email'=>$c[0]['email'],
             'club_phone'=>$c[0]['phone'],
             'club_title'=>$c[0]['title'],
+            'dancer_id'=>$d[0]['id'],
             'dancer_name'=>$d[0]['last_name'].' '.$c[0]['first_name'].' '.$c[0]['father_name'],
             'dancer_email'=>$d[0]['email'],
             'dancer_phone'=>$d[0]['phone'],

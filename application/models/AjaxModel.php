@@ -237,12 +237,17 @@ class AjaxModel extends CI_Model{
     
     public function updateDancer($data)
     {
-        $dancer=array(
-            'birthdate'=>$data['birthdate'],
-            'bell_id'=>$data['bell_id'],
-        );
-        $this->db->where('id', $data['id']);
-        $this->db->update('dancers', $dancer);
+        $dancer=array();
+        if (isset($data['birthdate'])){
+            $dancer['birthdate'] = $data['birthdate'];
+        }
+        if (isset($data['bell_id'])){
+            $dancer['bell_id'] = $data['bell_id'];
+        }
+        if (count($dancer)>0){
+            $this->db->where('id', $data['id']);
+            $this->db->update('dancers', $dancer);
+        }
         $user=array(
             'last_name'=>$data['last_name'],
             'first_name'=>$data['first_name'],
@@ -250,9 +255,18 @@ class AjaxModel extends CI_Model{
             'password'=>$data['password'],
             'email'=>$data['email'],
             'phone'=>$data['phone'],
-            'dancer'=>$data['dancer'],
         );
-        $this->db->where('id', $data['user_id']);
+        if (isset($data['dancer'])){
+            $user['dancer'] = $data['dancer'];
+        }
+        if (isset($data['user_id'])){
+            $user_id=$data['user_id'];
+        }else{
+            $q=$this->db->query('select user_id from dancers where id='.$data['id']);
+            $res=$q->result_array();
+            $user_id=$res[0]['user_id'];
+        }
+        $this->db->where('id', $user_id);
         $this->db->update('users', $user);
         return true;
     }
