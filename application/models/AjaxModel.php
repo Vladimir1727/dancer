@@ -13,7 +13,7 @@ class AjaxModel extends CI_Model{
     }
 
     function saveUser($user){
-            $data= array(
+            /*$data= array(
                     'first_name' => $user['first_name'], 
                     'last_name' => $user['last_name'],
                     'father_name' => $user['father_name'],
@@ -41,8 +41,9 @@ class AjaxModel extends CI_Model{
             admin=?
             where id=?
             ';
-            $this->db->cache_on();
-            return $this->db->query($update,$data);
+            return $this->db->query($update,$data);*/
+        $this->db->where('id', $user['id']);
+        return $this->db->update('users', $user);
     }
 
     public function filterUsers($filter)
@@ -286,4 +287,54 @@ class AjaxModel extends CI_Model{
                 . ' where id=(select user_id from dancers where id='.$id.')');
         return true;
     }
+    
+    public function getTrainer($id) {
+        $q=$this->db->query('select u.first_name, u.last_name, u.father_name, u.email, u.password,'
+                . ' u.trainer, u.phone, t.id, t.user_id'
+                . ' from users u, trainers t'
+                . ' where t.user_id=u.id and t.id='.$id);
+        $res=$q->result_array();
+        return $res;
+    }
+    
+    public function deactivateTrainer($id)
+    {
+        $this->db->query('update users'
+                . ' set trainer=3'
+                . ' where id=(select user_id from trainers where id='.$id.')');
+        return true;
+    }
+    
+    public function activateTrainer($id)
+    {
+        $this->db->query('update users'
+                . ' set trainer=2'
+                . ' where id=(select user_id from trainers where id='.$id.')');
+        return true;
+    }
+    
+    public function updateTrainer($data)
+    {
+        $user=array(
+            'last_name'=>$data['last_name'],
+            'first_name'=>$data['first_name'],
+            'father_name'=>$data['father_name'],
+            'password'=>$data['password'],
+            'email'=>$data['email'],
+            'phone'=>$data['phone'],
+        );
+        if (isset($data['trainer'])){
+            $user['trainer'] = $data['trainer'];
+        }
+        if (isset($data['user_id'])){
+            $user_id=$data['user_id'];
+        }else{
+            $q=$this->db->query('select user_id from dancers where id='.$data['id']);
+            $res=$q->result_array();
+            $user_id=$res[0]['user_id'];
+        }
+        $this->db->where('id', $user_id);
+        $this->db->update('users', $user);
+    }
+        
 }

@@ -20,7 +20,9 @@ class Cabinet extends CI_Controller
 
     public function user()
     {
-        $this->load->view('user/index');
+        $id=$this->session->id;
+        $user=$this->CabinetModel->showUser($id);
+        $this->load->view('user/index',['user'=>$user]);
     }
 
     public function dancer()
@@ -185,15 +187,45 @@ class Cabinet extends CI_Controller
         }
     }
     
-    public function trainerdancers() {
+    public function trainerdancers($trainer_id = 0) {
+        
         if ($this->session->trainer != 2){
             $this->load->view('errors/error_access');
         }
         else {
             $belly = $this->CabinetModel->bellyHtml();
-            $trainer_id=$this->session->id;
-            $dancers=$this->CabinetModel->htmlTrainerDancers($trainer_id);
-            $this->load->view('trainer/dancers',['dancers'=>$dancers,'belly'=>$belly]);
+            if ($trainer_id == 0){
+                $trainer_id=$this->session->id;
+                $dancers=$this->CabinetModel->htmlTrainerDancers($trainer_id);
+                $this->load->view('trainer/dancers',['dancers'=>$dancers,'belly'=>$belly]);
+            } else {
+                $dancers=$this->CabinetModel->htmlTrainerDancers($trainer_id);
+                $this->load->view('cluber/dancers',['dancers'=>$dancers,'belly'=>$belly]);
+            }
+        }
+    }
+    
+    public function clubtrainers()
+    {
+        if ($this->session->cluber != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            //$belly = $this->CabinetModel->bellyHtml();
+            $organiser_id=$this->session->id;
+            $trainers=$this->CabinetModel->htmlCluberTrainers($organiser_id);
+            $this->load->view('cluber/trainers',['trainers'=>$trainers]);
+        }
+    }
+    
+    public function clubcontact()
+    {
+        if ($this->session->trainer != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $contact=$this->CabinetModel->cluberContact();
+            $this->load->view('cluber/contact',['contact'=>$contact]);
         }
     }
 

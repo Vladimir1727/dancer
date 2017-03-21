@@ -35,7 +35,8 @@ class Ajax extends CI_Controller {
 
 	public function saveUser()
 	{
-		echo $this->AjaxModel->saveUser($_POST);
+            $res = $this->AjaxModel->saveUser($_POST);
+            var_dump($res);
 	}
 
 	public function filterUser(){
@@ -189,6 +190,46 @@ class Ajax extends CI_Controller {
         echo $this->AjaxModel->activateDancer($id);
     }
     
+    public function showCluberTrainers()
+    {   
+        $cluber_id=$this->session->id;
+        echo $this->CabinetModel->htmlCluberTrainers($cluber_id);
+    }
+    
+    public function trainerInfo()
+    {
+        $id=$_POST['id'];
+        $res=$this->AjaxModel->getTrainer($id);
+        echo json_encode($res[0]);
+    }
+
+    public function deactivateTrainer()
+    {   
+        $id=$_POST['id'];
+        echo $this->AjaxModel->deactivateTrainer($id);
+    }
+    
+    public function activateTrainer()
+    {   
+        $id=$_POST['id'];
+        echo $this->AjaxModel->activateTrainer($id);
+    }
+    
+    public function saveTrainer()
+    {
+        $data=$_POST;
+        $ins=$this->AjaxModel->updateTrainer($data);
+        var_dump($ins);
+        //echo $ins;
+    }
+    
+    public function IUser(){
+        $id=$this->session->id;
+        $user=$this->CabinetModel->showUser($id);
+        //var_dump($user);
+        echo json_encode($user);
+    }
+    
     public function test()
     {
     echo "TEST <br>";
@@ -203,4 +244,5 @@ class Ajax extends CI_Controller {
     echo json_encode($user);*/
     
     }
+    
 }

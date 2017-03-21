@@ -146,5 +146,47 @@ function get_roles(){
 	})	
 }
 
+function show(){
+    $.ajax({
+        url:'../../ajax/IUser',
+        type:'POST',
+        success: function(data){
+                var user=JSON.parse(data);
+                $('#name').html(user.last_name+' '+user.first_name+' '+user.father_name);
+                $('#phone').html(user.phone);
+                $('#email').html(user.email);
+        }
+    })
+}
+
+$('#edit_but').click(function(){
+    $.ajax({
+        url:'../../ajax/IUser',
+        type:'POST',
+        success: function(data){
+                var user=JSON.parse(data);
+                $('#e_last_name').val(user.last_name);
+                $('#e_first_name').val(user.first_name);
+                $('#e_father_name').val(user.father_name);
+                $('#e_password').val(user.password);
+                $('#e_phone').val(user.phone);
+                $('#e_email').val(user.email);
+                $('#e_id').val(user.id);
+        }
+    })
+});
+
+$('#savemodal').click(function(){
+    var data=$('#edit_form').serializeArray();
+    $.ajax({
+        url:'../../ajax/saveUser',
+        type:'POST',
+        data:data,
+        success: function(data){
+            console.log(data);
+            show();
+        }
+    });
+});
 
 })})(jQuery)

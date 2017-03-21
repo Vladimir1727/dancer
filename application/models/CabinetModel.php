@@ -6,7 +6,7 @@ class CabinetModel extends CI_Model{
 		$this->load->library('session');
 	}
 
-	function getUsers($next){
+	public function getUsers($next){
 		$query = $this->db->query('select * from users LIMIT '.$next.',20');
 		$users=$query->result_array();
 		return $users;
@@ -288,11 +288,11 @@ class CabinetModel extends CI_Model{
         return $data;
     }
     
-    function htmlTrainerDancers($trainer_id) {
+    public function htmlTrainerDancers($trainer_id) {
         $q = $this->db->query('select u.first_name, u.last_name, u.phone, u.email, u.dancer,'
                 . ' d.id, d.birthdate'
                 . ' from users u, dancers d'
-                . ' where u.id=d.user_id and trainer_id='
+                . ' where u.id=d.user_id and d.trainer_id='
                 . '(select id from trainers where user_id='.$trainer_id.')');
         $html='';
         foreach ($q->result() as $r)
@@ -358,4 +358,80 @@ class CabinetModel extends CI_Model{
         return $data;
     }
 
+    public function htmlCluberTrainers($cluber_id) {
+        $q = $this->db->query('select u.first_name, u.last_name, u.father_name, u.phone, u.email, u.trainer, t.id'
+                . ' from users u, trainers t'
+                . ' where u.id=t.user_id and t.club_id='
+                . '(select id from clubers where user_id='.$cluber_id.')');
+        $html='';
+        foreach ($q->result() as $r)
+        {
+            $html .= '<tr>';
+            $html .= '<td class="hidden">'.$r->id.'</td>';
+            $html .= '<td>'.$r->last_name.' '.$r->first_name.' '.$r->father_name.'</td>';
+            if ($r->trainer == 0) $html .= '<td> нет_ </td>';
+            if ($r->trainer == 1) $html .= '<td> запрошен </td>';
+            if ($r->trainer == 2) $html .= '<td> активный </td>';
+            if ($r->trainer == 3) $html .= '<td> заблокирован </td>';
+            $html .= '<td>'.$r->email.' '.$r->phone.'</td>';
+            $html.='<td><button class="btn btn-info btn-sm info" id="i'.$r->id
+                    .'" data-toggle="modal" data-target="#infomodal">info</button> ';
+            $html.='<button class="btn btn-warning btn-sm edit" id="e'.$r->id
+                    .'" data-toggle="modal" data-target="#editmodal">edit</button> ';
+            if ($r->trainer != 2 ){
+                $html.='<button class="btn btn-success btn-sm activate" id="a'.
+                        $r->id.'">activate</button>';
+            }
+            if ($r->trainer == 1 ||  $r->trainer == 2){
+                $html.='<button class="btn btn-danger btn-sm deactivate" id="d'.
+                        $r->id.'">delactivate</button>';
+            }
+            $html.=' <a href="../cabinet/trainerdancers/'.$this->user('trainer',$r->id).'" class="btn btn-default btn-sm dancers" id="t'.$r->id.'">танцоры</a></td>';
+            $html .= '</tr>';
+        }
+        return $html;
+    }
+    
+    public function user($role, $role_id){
+        switch ($role){
+            case 'dancer':
+                $table='dancers';
+                break;
+            case 'trainer':
+                $table='trainers';
+                break;
+            case 'cluber':
+                $table='clubers';
+                break;
+            case 'organizer':
+                $table='organizers';
+                break;
+        }
+        $q=$this->db->query('select user_id from '.$table.' where id='.$role_id);
+        $res=$q->result_array();
+        return $res[0]['user_id'];
+    }
+    
+    public function cluberContact()
+    {
+        $q=$this->db->query('select u.first_name, u.last_name, u.father_name, u.email, u.phone, c.title'
+                . ' from users u, clubers c'
+                . ' where u.id=c.user_id and c.user_id='.$this->session->id);
+        $c=$q->result_array();
+        $data=array(
+            'club_name'=>$c[0]['last_name'].' '.$c[0]['first_name'].' '.$c[0]['father_name'],
+            'club_email'=>$c[0]['email'],
+            'club_phone'=>$c[0]['phone'],
+            'club_title'=>$c[0]['title'],
+        );
+        return $data;
+    }
+    
+    public function showUser($id){
+        $q=$this->db->query('select first_name, last_name, father_name, email, password, phone, id'
+                . ' from users'
+                . ' where id='.$id);
+        $res=$q->result();
+        return $res[0];
+    }
 }
