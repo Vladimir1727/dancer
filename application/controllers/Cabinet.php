@@ -228,6 +228,25 @@ class Cabinet extends CI_Controller
             $this->load->view('cluber/contact',['contact'=>$contact]);
         }
     }
+    
+    public function admincompetitions(){
+        if ($this->session->admin != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $statuses = $this->CabinetModel->selectStatuses();
+            $regions = $this->CabinetModel->regions_html();
+            $ways=$this->CabinetModel->selectWays();
+            $competitions=$this->CabinetModel->htmlCompetitions();
+            $data=array(
+                'regions'=>$regions,
+                'ways'=>$ways,
+                'competitions'=>$competitions,
+                'statuses'=>$statuses,
+            );
+            $this->load->view('admin/competitions',$data);
+        }
+    }
 
     public function test()
     {

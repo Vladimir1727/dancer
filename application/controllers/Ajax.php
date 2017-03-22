@@ -230,6 +230,33 @@ class Ajax extends CI_Controller {
         echo json_encode($user);
     }
     
+    public function selectOrg()
+    {
+        echo $this->AjaxModel->selectOrg($_POST['city']);
+    }
+    
+    public function addCompetition()
+    {
+        echo $this->AjaxModel->addCompetition($_POST);
+    }
+    
+    public function updateCompetition()
+    {
+        
+        echo $this->AjaxModel->updateCompetition($_POST);
+    }
+    
+    public function showCompetitions()
+    {
+        echo $this->CabinetModel->htmlCompetitions();
+    }
+    
+    public function compInfo()
+    {
+        $res = $this->AjaxModel->compInfo($_POST['id']);
+        echo json_encode($res);
+    }
+    
     public function test()
     {
     echo "TEST <br>";
@@ -242,7 +269,7 @@ class Ajax extends CI_Controller {
     echo 'pages= '.$pages.'<br>';*/
     /*$user=$this->AjaxModel->getUserInfo(1);
     echo json_encode($user);*/
-    
+    echo $this->AjaxModel->statusId("ON");
     }
     
 }

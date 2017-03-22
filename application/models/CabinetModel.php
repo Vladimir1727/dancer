@@ -434,4 +434,41 @@ class CabinetModel extends CI_Model{
         $res=$q->result();
         return $res[0];
     }
+    
+    public function htmlCompetitions() 
+    {
+        $q = $this->db->query('select c.name, c.id, ci.city,'
+                . ' c.date_reg_open, c.date_reg_close, c.date_open, c.date_close, s.status'
+                . ' from competitions c, statuses s, cities ci'
+                . ' where c.city_id=ci.id and c.status_id=s.id');
+        $html='';
+        foreach ($q->result() as $r)
+        {
+            $html .= '<tr>';
+            $html .= '<td class="hidden">'.$r->id.'</td>';
+            $html .= '<td>'.$r->name.'</td>';
+            $html .= '<td>'.$r->city.'</td>';
+            $html .= '<td>с '.$r->date_reg_open.' по '.$r->date_reg_close.'</td>';
+            $html .= '<td>с '.$r->date_open.' по '.$r->date_close.'</td>';
+            $html .= '<td>'.$r->status.'</td>';
+            $html.='<td><button class="btn btn-info btn-sm info" id="i'.$r->id
+                    .'" data-toggle="modal" data-target="#infomodal">info</button> ';
+            $html.='<button class="btn btn-warning btn-sm edit" id="e'.$r->id
+                    .'" data-toggle="modal" data-target="#editmodal">edit</button> ';
+            $html.=' <a href="../cabinet/competition/'.$r->id.'" class="btn btn-default btn-sm comp" id="c'.$r->id.'">управление</a></td>';
+            $html .= '</tr>';
+        }
+        return $html;
+    }
+    
+    public function selectStatuses()
+    {
+        $q = $this->db->query('select * from statuses');
+        $html='';
+        $row = $q->result_array();
+        foreach ($row as $r){
+            $html .= '<option value="'.$r['id'].'">'.$r['status'].'</option>';
+        }
+        return $html;
+    }
 }

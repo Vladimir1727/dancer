@@ -336,5 +336,47 @@ class AjaxModel extends CI_Model{
         $this->db->where('id', $user_id);
         $this->db->update('users', $user);
     }
-        
+    
+    public function selectOrg($city_id)
+    {
+        $q = $this->db->query('select u.last_name, u.first_name, u.father_name, o.id'
+                . ' from users u, organizers o'
+                . ' where o.user_id=u.id and o.city_id='.$city_id);
+        $res = $q->result_array();
+        $select='<option value=0>Выберите организатора</option>';
+        foreach ($res as $r){
+            $select .= '<option value="'.$r['id'].'">';
+            $select .= $r['last_name'].' '.$r['first_name'].' '.$r['father_name'];
+            $select .= '</option>';
+        }
+        return $select;
+    }
+    
+    public function statusId($status_name){
+        $q = $this->db->query('select id from statuses where status="'.$status_name.'"');
+        $res = $q->result();
+        return $res[0]->id;
+    }
+
+    public function addCompetition($data)
+    {
+        $data['status_id']= $this->statusId("ON");
+        return $this->db->insert('competitions', $data);
+    }
+    
+    public function compInfo($id) {
+        $q=$this->db->query('select co.name, co.comment, co.city_id, co.way_id, '
+                . ' co.date_reg_open, co.date_reg_close, co.date_open, co.date_close, co.status_id, co.org_id,'
+                . ' ci.city, ci.region_id, w.way, s.status, u.first_name, u.last_name, u.father_name, u.phone, u.email'
+                . ' from competitions co, cities ci, ways w, statuses s, users u, organizers o'
+                . ' where co.city_id=ci.id and co.status_id=s.id and co.way_id=w.id and co.org_id=o.id and o.user_id=u.id and co.id='.$id);
+        $res=$q->result_array();
+        return $res[0];
+    }
+    
+    public function updateCompetition($data)
+    {
+        $this->db->where('id', $data['id']);
+        return $this->db->update('competitions', $data);
+    }
 }

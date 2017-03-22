@@ -126,7 +126,8 @@ class ServiceModel extends CI_Model{
 		on update cascade,
 		bell_id int,
 		foreign key (bell_id) references bellydance(id)
-		on update cascade
+		on update cascade,
+                pay year default null
 		)default charset=utf8';
 		$this->db->query($dancer);
                 $ways='create table ways('
@@ -167,7 +168,7 @@ class ServiceModel extends CI_Model{
                         . 'id int not null auto_increment primary key,'
                         . 'status varchar (32)'
                         . ')default charset=utf8';
-                $this->db->query($statuses);*/
+                $this->db->query($statuses);
                 $showLigs='create table show_ligs('
                         . 'id int not null auto_increment primary key,'
                         . 'lig_id int,'
@@ -193,6 +194,24 @@ class ServiceModel extends CI_Model{
 		points tinyint default 0
 		)default charset=utf8';
                 $this->db->query($reight);*/
+                $competition='create table competitions('
+                        . 'id int not null auto_increment primary key,'
+                        . 'name varchar(64),'
+                        . 'city_id int,'
+                        . 'foreign key (city_id) references cities(id),'
+                        . 'comment varchar(256),'
+                        . 'way_id int,'
+                        . 'foreign key (way_id) references ways(id) on update cascade,'
+                        . 'date_reg_open date,'
+                        . 'date_reg_close date,'
+                        . 'date_open date,'
+                        . 'date_close date,'
+                        . 'status_id int,'
+                        . 'foreign key (status_id) references statuses(id),'
+                        . 'org_id int,'
+                        . 'foreign key (org_id) references organizers(id)'
+                        . ')default charset=utf8';
+                $this->db->query($competition);
 		return true;
 	}
 

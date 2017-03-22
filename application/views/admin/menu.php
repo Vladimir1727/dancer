@@ -20,4 +20,7 @@
     <a href="<?php echo base_url();?>index.php/cabinet/adminagelig" class="btn btn-default">
         возраст - лига
     </a>
+    <a href="<?php echo base_url();?>index.php/cabinet/admincompetitions" class="btn btn-default">
+        Конкурсы
+    </a>
 </div>
