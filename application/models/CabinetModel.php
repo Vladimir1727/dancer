@@ -435,7 +435,7 @@ class CabinetModel extends CI_Model{
         return $res[0];
     }
     
-    public function htmlCompetitions() 
+    public function htmlCompetitions($role) 
     {
         $q = $this->db->query('select c.name, c.id, ci.city,'
                 . ' c.date_reg_open, c.date_reg_close, c.date_open, c.date_close, s.status'
@@ -453,10 +453,17 @@ class CabinetModel extends CI_Model{
             $html .= '<td>'.$r->status.'</td>';
             $html.='<td><button class="btn btn-info btn-sm info" id="i'.$r->id
                     .'" data-toggle="modal" data-target="#infomodal">info</button> ';
+            
+            if ($role=="admin"){
             $html.='<button class="btn btn-warning btn-sm edit" id="e'.$r->id
-                    .'" data-toggle="modal" data-target="#editmodal">edit</button> ';
-            $html.=' <a href="../cabinet/competition/'.$r->id.'" class="btn btn-default btn-sm comp" id="c'.$r->id.'">управление</a></td>';
-            $html .= '</tr>';
+                    .'" data-toggle="modal" data-target="#editmodal">edit</button> ';    
+                $html.=' <a href="../cabinet/competition/'.$r->id.'" class="btn btn-default btn-sm comp" id="c'.$r->id.'">управление</a>';
+            }
+            if ($role=="trainer"){
+                $html.=' <a href="../cabinet/traineraddtocomp/'.$r->id.'" class="btn btn-success btn-sm comp" id="c'.$r->id.'">регистрация участников</a>';
+            }
+            
+            $html .= '</td></tr>';
         }
         return $html;
     }
@@ -468,6 +475,26 @@ class CabinetModel extends CI_Model{
         $row = $q->result_array();
         foreach ($row as $r){
             $html .= '<option value="'.$r['id'].'">'.$r['status'].'</option>';
+        }
+        return $html;
+    }
+    
+    public function allDancersToComp($role)
+    {
+        if ($role == 'trainer'){
+            $select='select u.last_name, u.first_name, d.birthdate, d.id'
+                    . ' from users u, dancers d'
+                    . ' where d.user_id=u.id and trainer_id=(select id from trainers where user_id='.$this->session->id.')';
+        }
+        $q = $this->db->query($select);
+        $row = $q->result_array();
+        $html='';
+        foreach ($row as $r){
+            
+            $html .= '<tr>';
+            $html .='<td><input type="checkbox" name="dancer[]" value='.$r['id'].'>'
+                    .$r['last_name'].' '.$r['first_name'].'</td>';
+            $html .= '</tr>';
         }
         return $html;
     }

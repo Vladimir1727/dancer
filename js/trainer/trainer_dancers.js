@@ -137,5 +137,17 @@ function show(){
     });
 }
 
+$('#insert_but').click(function(){
+    var data=$('#new_dancer').serializeArray();
+    $.ajax({
+        url:'../ajax/addDancer',
+        type:'POST',
+        data:data,
+        success: function(data){
+            show();
+            console.log(data);
+        }
+    });
+});
 
 })})(jQuery)

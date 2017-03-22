@@ -297,6 +297,16 @@ class AjaxModel extends CI_Model{
         return $res;
     }
     
+    public function getTrainerId($user_id) {
+        $q = $this->db->query('select id from trainers where user_id='.$user_id);
+        if ($res = $q->result_array()) {
+            return $res[0]['id'];
+        }
+        else {
+            return false;
+        }
+    }
+    
     public function deactivateTrainer($id)
     {
         $this->db->query('update users'
@@ -378,5 +388,29 @@ class AjaxModel extends CI_Model{
     {
         $this->db->where('id', $data['id']);
         return $this->db->update('competitions', $data);
+    }
+    
+    public function addDancer($data, $trainer_id)
+    {
+        $user = array(
+            'first_name'=>$data['first_name'],
+            'last_name'=>$data['last_name'],
+            'father_name'=>$data['father_name'],
+            'phone'=>$data['phone'],
+            'email'=>$data['email'],
+            'password'=>$data['password'],
+            'first_name'=>$data['first_name'],
+            'dancer'=>2,
+            );
+         $this->db->insert('users', $user);
+        $user_id = $this->db->insert_id();
+        $dancer = array(
+            'user_id'=>$user_id,
+            'birthdate'=>$data['birthdate'],
+            'bell_id'=>$data['bell_id'],
+            'trainer_id'=>$trainer_id,
+        );
+        $this->db->insert('dancers', $dancer);
+        return "OK";
     }
 }

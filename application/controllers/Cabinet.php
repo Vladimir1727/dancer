@@ -237,7 +237,7 @@ class Cabinet extends CI_Controller
             $statuses = $this->CabinetModel->selectStatuses();
             $regions = $this->CabinetModel->regions_html();
             $ways=$this->CabinetModel->selectWays();
-            $competitions=$this->CabinetModel->htmlCompetitions();
+            $competitions=$this->CabinetModel->htmlCompetitions('admin');
             $data=array(
                 'regions'=>$regions,
                 'ways'=>$ways,
@@ -246,6 +246,43 @@ class Cabinet extends CI_Controller
             );
             $this->load->view('admin/competitions',$data);
         }
+    }
+    
+    public function trainercompetitions(){
+        if ($this->session->trainer != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $statuses = $this->CabinetModel->selectStatuses();
+            $regions = $this->CabinetModel->regions_html();
+            $ways=$this->CabinetModel->selectWays();
+            $competitions=$this->CabinetModel->htmlCompetitions('trainer');
+            $data=array(
+                'regions'=>$regions,
+                'ways'=>$ways,
+                'competitions'=>$competitions,
+                'statuses'=>$statuses,
+            );
+            $this->load->view('trainer/competitions',$data);
+        }
+    }
+    
+    public function traineraddtocomp($id){
+        if ($this->session->trainer != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+        $dancers = $this->CabinetModel->allDancersToComp('trainer');
+        $data=array(
+            'dancers'=>$dancers,
+        );
+        $this->load->view('trainer/adddancerstocomp',$data);
+        }
+    }
+    
+    public function compreglist()
+    {
+        var_dump($_POST);
     }
 
     public function test()

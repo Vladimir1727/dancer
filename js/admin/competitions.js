@@ -187,6 +187,7 @@ function show(){
     $.ajax({
 	url:'../ajax/showCompetitions',
 	type:'POST',
+        data:'role=admin',
         success: function(data){
             $('#main_table tbody').html(data);
             addClick();

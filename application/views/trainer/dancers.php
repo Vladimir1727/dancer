@@ -85,6 +85,78 @@
 </div>
 <!-- End Modal -->
 
+<div id="newmodal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+    <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Добавить</h4>
+            </div>
+            <div class="modal-body">
+                <form id="new_dancer">
+                    <div class="form-group">
+                        <label>
+                            Фамилия
+                            <input type="text" id="n_last_name" name="last_name" placeholder="фамилия..." class="form-control input-sm">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Имя
+                            <input type="text" id="n_first_name" name="first_name" placeholder="имя..." class="form-control input-sm">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Отчество
+                            <input type="text" id="n_father_name" name="father_name" placeholder="отчество..." class="form-control input-sm">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Пароль
+                            <input type="text" id="n_password" name="password" placeholder="пароль..." class="form-control input-sm">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            E-mail
+                            <input type="email" id="n_email" name="email" placeholder="e-mail..." class="form-control input-sm">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Телефон
+                            <input type="text" id="n_phone" name="phone" placeholder="телефон..." class="form-control input-sm">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            День рождния
+                            <input type="date" id="n_birthdate" name="birthdate" placeholder="дата рождения..." class="form-control input-sm">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Ассоциация
+                            <select class="form-control" id="n_bell" name="bell_id">
+                                <option value="0" selected>Выберите организацию</option>
+                                <?php echo $belly; ?>
+                            </select>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <br>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal" id="insert_but">СОХРАНИТЬ</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Modal -->
+
 <div id="infomodal" class="modal fade" role="dialog">
     <div class="modal-dialog">
     <!-- Modal content-->
@@ -115,7 +187,10 @@
 <?php include_once 'menu.php';?>
 <h1 class="h1 text-success">Танцоры</h1>
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-2">
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newmodal">Добавить</button>
+    </div>
+    <div class="col-md-10">
         <table class="table table-striped" id="dancers_table">
             <tbody>
                 <?php echo $dancers; ?>
@@ -132,5 +207,5 @@
         </table>
     </div>
 </div>
-<script src="<?php echo base_url(); ?>/js/trainer_dancers.js"></script>
+<script src="<?php echo base_url(); ?>/js/trainer/trainer_dancers.js"></script>
 <?php $this->load->view('footer'); ?>
