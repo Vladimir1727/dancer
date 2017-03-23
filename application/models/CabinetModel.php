@@ -498,4 +498,99 @@ class CabinetModel extends CI_Model{
         }
         return $html;
     }
+    
+    public function getCatList($data)
+    {
+        $dancers = $data['dancer'];
+        $comp_id = $data['comp_id'];
+        //находим количесвов группе
+        $d_count=count($dancers);
+        //получаем массив возрастов
+        $ages = array();
+        $q = $this->db->query('select birthdate from dancers where id in ('.implode(',', $dancers).')');
+        $res = $q->result_array();
+        foreach ($res as $r){
+            $birth =  strtotime($r['birthdate']);
+            $ytime = time() - $birth;
+            $ages[] = ($ytime - $ytime % 31556926) / 31556926;
+        }
+        //получаем массив стилей
+        $s_count = ($d_count > 1) ? 2: 1;
+        $q = $this->db->query('select id, style from styles'
+                . ' where dancers_count in(0,'.$s_count.')'
+                . ' and way_id=(select way_id from competitions where id='.$comp_id.') and deleted=0');
+        $styles = $q->result_array();
+        //получаем массив возрастных групп(категорий)
+        $q = $this->db->query('select id, name, min_age, max_age'
+                . ' from cat_age'
+                . ' where dancers_count in (0,'.$comp_id.') and deleted=0');
+        $res = $q->result_array();
+        $age_cat = array();
+        foreach ($res as $r){
+            $f = TRUE;
+            foreach($ages as $age){
+                if ($age > $r['max_age'] || $age+5 < $r['min_age']){
+                    $f = FALSE;
+                }
+            }
+            if ($f) $age_cat[] = $r;
+        }
+        //получаем массив категорий по количеству
+        $q = $this->db->query('select id, name from cat_count'
+                . ' where min_count>='.$d_count.' and max_count<='.$d_count.' and deleted=0');
+        $count_cat = $q->result_array();
+        //получаем список лиг
+        if ($d_count > 1){
+            $q = $this->db->query('select id, name from ligs'
+                    . ' where name in ("Дебют","Открытая лига")'
+                    . ' and way_id=(select way_id from competitions where id='.$comp_id.') and deleted=0');
+            $ligs = $q->result_array();
+        }
+        else {//соло
+            $ages_str='';
+            $i=FALSE;
+            foreach($age_cat as $age){
+                $ages_str.= ($i) ? ',':'';
+                $i=TRUE;
+                $ages_str.= $age['id'];
+            }
+            $q = $this->db->query('select DISTINCT l.id, l.name'
+                    . ' from ligs l, show_ligs s'
+                    . ' where s.lig_id=l.id and s.age_id in ('.$ages_str.')'
+                    . ' and l.way_id=(select way_id from competitions where id='.$comp_id.') and deleted=0');
+            $ligs = $q->result_array();
+            $q = $this->db->query('select l.id, l.name, l.number'
+                    . ' from ligs l, dancers d, experience e'
+                    . ' where l.deleted=0 and l.id in (select lig_id from experience'
+                    . ' where dancer_id='.$dancers[0].')'
+                    . ' and l.way_id=(select way_id from competitions where id='.$comp_id.')'
+                    . ' and e.lig_id=l.id and e.dancer_id=d.id');
+            $dan_lig= $q->result_array();
+            if (count($dan_lig) == 0){
+                $q= $this->db->query('select id, name, number from ligs'
+                    . ' where number=1 and way_id=(select way_id from competitions where id='.$comp_id.')');
+                $dan_lig = $q->result_array();
+                }
+            if ($dan_lig[0]['name']!='Профессионалы'){
+                $q = $this->db->query('select id, name, number from ligs'
+                    . ' where number='.($dan_lig[0]['number']+1).' and way_id=(select way_id from competitions where id='.$comp_id.')');
+                $res = $q->result_array();
+                $dan_lig[1]=$res[0];
+            }
+        }
+        //генерируем суммарные категории
+        $html='';
+        $i=1;
+        foreach ($styles as $style){
+            foreach ($age_cat as $age){
+                foreach ($count_cat as $count){
+                    foreach ($ligs as $dl){
+                        $html.=$i++.' '.$style['style'].' '.$age['name'].' '.$count['name'].' '.$dl['name'].'<br>';
+                    }
+                }
+            }
+        }
+        
+        return $html;
+    }
 }

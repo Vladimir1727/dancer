@@ -193,7 +193,7 @@ class ServiceModel extends CI_Model{
 		reight tinyint default 0,
 		points tinyint default 0
 		)default charset=utf8';
-                $this->db->query($reight);*/
+                $this->db->query($reight);
                 $competition='create table competitions('
                         . 'id int not null auto_increment primary key,'
                         . 'name varchar(64),'
@@ -211,7 +211,16 @@ class ServiceModel extends CI_Model{
                         . 'org_id int,'
                         . 'foreign key (org_id) references organizers(id)'
                         . ')default charset=utf8';
-                $this->db->query($competition);
+                $this->db->query($competition);*/
+                $exp='create table experience('
+                        . 'id int not null auto_increment primary key,'
+                        . 'dancer_id int,'
+                        . 'foreign key (dancer_id) references dancers(id),'
+                        . 'lig_id int,'
+                        . 'foreign key (lig_id) references ligs(id),'
+                        . 'points int'
+                        . ')default charset=utf8';
+                $this->db->query($exp);
 		return true;
 	}
 

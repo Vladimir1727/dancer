@@ -275,6 +275,7 @@ class Cabinet extends CI_Controller
         $dancers = $this->CabinetModel->allDancersToComp('trainer');
         $data=array(
             'dancers'=>$dancers,
+            'comp_id'=>$id
         );
         $this->load->view('trainer/adddancerstocomp',$data);
         }
@@ -282,7 +283,11 @@ class Cabinet extends CI_Controller
     
     public function compreglist()
     {
-        var_dump($_POST);
+        $list = $this->CabinetModel->getCatList($_POST);
+        /*echo '<pre>';
+        var_dump($list);
+        echo '</pre>';*/
+        echo $list;
     }
 
     public function test()
