@@ -584,13 +584,41 @@ class CabinetModel extends CI_Model{
         foreach ($styles as $style){
             foreach ($age_cat as $age){
                 foreach ($count_cat as $count){
-                    foreach ($ligs as $dl){
-                        $html.=$i++.' '.$style['style'].' '.$age['name'].' '.$count['name'].' '.$dl['name'].'<br>';
+                    foreach ($ligs as $lig){
+                        $html.='<tr><td>';
+                        $html.='<form>';
+                        $html.='<input type="hidden" name="style_id" value="'.$style['id'].'">';
+                        $html.='<input type="hidden" name="age_id" value="'.$age['id'].'">';
+                        $html.='<input type="hidden" name="count_id" value="'.$count['id'].'">';
+                        $html.='<input type="hidden" name="lig_id" value="'.$lig['id'].'">';
+                        $html.='<input type="checkbox" id="cat'.$i.'">';
+                        $html.=$i.' '.$style['style'].' '.$age['name'].' '.$count['name'].' '.$lig['name'];
+                        $html.='</form>';
+                        $html.='</td></tr>';
+                        $i++;
                     }
                 }
             }
         }
         
+        return $html;
+    }
+    
+    public function getDancersList($dancers){
+        $q= $this->db->query('select u.first_name, u.last_name, d.birthdate, d.id'
+                . ' from dancers as d '
+                . ' right join users as u '
+                . ' on u.id=d.user_id'
+                . ' where d.id in ('.implode(',', $dancers).')');
+        $res = $q->result_array();
+        $html='';
+        foreach ($res as $r){
+            $html.='<tr>';
+            $html.='<input type="hidden" name="dancer[]" value='.$r['id'].'>';
+            $html.='<td>'.$r['last_name'].' '.$r['first_name'].'</td>';
+            $html.='<td>'.$r['birthdate'].'</td>';
+            $html.='</tr>';
+        }
         return $html;
     }
 }

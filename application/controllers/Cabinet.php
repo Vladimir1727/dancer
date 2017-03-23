@@ -284,10 +284,13 @@ class Cabinet extends CI_Controller
     public function compreglist()
     {
         $list = $this->CabinetModel->getCatList($_POST);
-        /*echo '<pre>';
-        var_dump($list);
-        echo '</pre>';*/
-        echo $list;
+        $dancers = $this->CabinetModel->getDancersList($_POST['dancer']);
+        $data=array(
+            'list'=>$list,
+            'comp_id'=>$_POST['comp_id'],
+            'dancers'=>$dancers,
+        );
+        $this->load->view('trainer/select_summ_cat',$data);
     }
 
     public function test()
