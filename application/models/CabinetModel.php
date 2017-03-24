@@ -5,8 +5,8 @@ class CabinetModel extends CI_Model{
 		$this->load->database();
 		$this->load->library('session');
 	}
-
-	public function getUsers($next){
+        
+        public function getUsers($next){
 		$query = $this->db->query('select * from users LIMIT '.$next.',20');
 		$users=$query->result_array();
 		return $users;
@@ -461,7 +461,12 @@ class CabinetModel extends CI_Model{
                 $html.=' <a href="../cabinet/competition/'.$r->id.'" class="btn btn-default btn-sm comp" id="c'.$r->id.'">управление</a>';
             }
             if ($role=="trainer"){
-                $html.=' <a href="../cabinet/traineraddtocomp/'.$r->id.'" class="btn btn-success btn-sm comp" id="c'.$r->id.'">регистрация участников</a>';
+                if (strtotime($r->date_reg_open)<time() && strtotime($r->date_reg_close)>time() && $r->status=='ON'){
+                    $html.=' <a href="../cabinet/traineraddtocomp/'.$r->id.'" class="btn btn-success btn-sm comp" id="c'.$r->id.'">регистрация участников</a>';
+                }else{
+                    $html.='регистрация закрыта';
+                }
+                
             }
             
             $html .= '</td></tr>';
