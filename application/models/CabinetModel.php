@@ -313,6 +313,7 @@ class CabinetModel extends CI_Model{
                     .'" data-toggle="modal" data-target="#infomodal">info</button> ';
             $html.='<button class="btn btn-warning btn-sm edit" id="e'.$r->id
                     .'" data-toggle="modal" data-target="#editmodal">edit</button> ';
+            $html.='<a href="../cabinet/experience/'.$r->id.'" class="btn btn-default btn-sm">опыт</a>';
             if ($r->dancer != 2 ){
                 $html.='<button class="btn btn-success btn-sm activate" id="a'.
                         $r->id.'">activate</button></td>';
@@ -620,5 +621,39 @@ class CabinetModel extends CI_Model{
             $html.='</tr>';
         }
         return $html;
+    }
+    
+    public function dancerExpHtml($dancer_id){
+        $q= $this->db->query('select u.first_name, u.last_name, u.father_name, d.birthdate, u.phone, u.email, d.id'
+                . ' from dancers as d '
+                . ' right join users as u '
+                . ' on u.id=d.user_id'
+                . ' where d.id ='.$dancer_id);
+        $res = $q->result_array();
+        $dancer=$res[0];
+        $html='';
+        $q= $this->db->query('select ways.way, ways.id, experience.points, ligs.name'
+                . ' from ways'
+                . ' left join experience on ways.id=experience.way_id'
+                . ' and dancer_id='.$dancer_id.''
+                . ' left join ligs on experience.lig_id=ligs.id');
+        $res = $q->result_array();
+        foreach ($res as $r){
+            $html.='<tr>';
+            $html.='<td>'.$r['way'].'</td>';
+            if (is_null($r['name'])){
+                $html.='<td>нет опыта</td><td><button class="btn btn-success add_exp" id="w'.$r['id']
+                        .'" data-toggle="modal" data-target="#addmodal">добавить</button>';
+            }else{
+                $html.='<td>'.$r['name'].'</td>';
+                $html.='<td>'.$r['points'].'</td>';
+            }
+            $html.='</tr>';
+        }
+        $data=array(
+            'dancer'=>$dancer,
+            'exp'=>$html
+        );
+        return $data;
     }
 }

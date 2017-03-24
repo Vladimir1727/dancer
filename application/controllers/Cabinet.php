@@ -293,6 +293,17 @@ class Cabinet extends CI_Controller
         $this->load->view('trainer/select_summ_cat',$data);
     }
 
+    public function experience($id)
+    {
+        if ($this->session->trainer == 2 || $this->session->cluber == 2){
+            $exp = $this->CabinetModel->dancerExpHtml($id);
+            $this->load->view('trainer/experience',$exp);
+        }
+        else {
+            $this->load->view('errors/error_access');
+        }
+    }
+    
     public function test()
     {
     echo "TEST <br>";

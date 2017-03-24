@@ -413,4 +413,9 @@ class AjaxModel extends CI_Model{
         $this->db->insert('dancers', $dancer);
         return "OK";
     }
+    
+    public function saveExp($data)
+    {
+        return $this->db->insert('experience', $data);
+    }
 }

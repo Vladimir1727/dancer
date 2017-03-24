@@ -263,19 +263,35 @@ class Ajax extends CI_Controller {
         echo $this->AjaxModel->addDancer($_POST,$trainer_id);
     }
     
+    public function selectLigs()
+    {
+        echo $this->AjaxModel->selectLigs($_POST['way_id']);
+    }
+    
+    public function showExp()
+    {
+        $exp = $this->CabinetModel->dancerExpHtml($_POST['id']);
+        echo $exp['exp'];
+    }
+    
+    public function saveExp()
+    {
+        echo $ins=$this->AjaxModel->saveExp($_POST);
+    }
+    
     public function test()
     {
-    echo "TEST <br>";
-    /*$rows=6;
-    $in_page=5;
-    $tall=$rows%$in_page;
-    $rows-=$tall;
-    $pages=round($rows/$in_page);
-    if ($tall>0) $pages+=1;
-    echo 'pages= '.$pages.'<br>';*/
-    /*$user=$this->AjaxModel->getUserInfo(1);
-    echo json_encode($user);*/
-    echo $this->AjaxModel->getTrainerId(5);
+        echo "TEST <br>";
+        /*$rows=6;
+        $in_page=5;
+        $tall=$rows%$in_page;
+        $rows-=$tall;
+        $pages=round($rows/$in_page);
+        if ($tall>0) $pages+=1;
+        echo 'pages= '.$pages.'<br>';*/
+        /*$user=$this->AjaxModel->getUserInfo(1);
+        echo json_encode($user);*/
+        echo $this->AjaxModel->getTrainerId(5);
     }
     
     
