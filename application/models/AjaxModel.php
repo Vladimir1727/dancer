@@ -377,6 +377,7 @@ class AjaxModel extends CI_Model{
     
     public function compInfo($id) {
         $q=$this->db->query('select co.name, co.comment, co.city_id, co.way_id, '
+                . ' co.pay_iude, pay_other, pay_not,'
                 . ' co.date_reg_open, co.date_reg_close, co.date_open, co.date_close, co.status_id, co.org_id,'
                 . ' ci.city, ci.region_id, w.way, s.status, u.first_name, u.last_name, u.father_name, u.phone, u.email'
                 . ' from competitions co, cities ci, ways w, statuses s, users u, organizers o'
@@ -451,7 +452,7 @@ class AjaxModel extends CI_Model{
         return true;
     }
     
-    public function getCompListHtml($comp_id, $role, $role_id)
+    public function getCompListHtml($comp_id, $role, $role_id = 0)
     {
         $rows = $this->getCompList($comp_id, $role, $role_id);
         $html='';
@@ -459,6 +460,9 @@ class AjaxModel extends CI_Model{
             $html.='<tr>';
             $html.='<td>'.$row['last_name'].' '.$row['first_name'].'</td>';
             $html.='<td>'.$row['style'].' '.$row['age_cat'].' '.$row['count_cat'].' '.$row['lig'].'</td>';
+            if ($row['type']==1) $html.='<td>'.$row['pay_iude'].'</td>';
+            if ($row['type']==2) $html.='<td>'.$row['pay_other'].'</td>';
+            if ($row['type']==3) $html.='<td>'.$row['pay_not'].'</td>';
             $html.='</tr>';
         }
         return $html;
@@ -469,12 +473,26 @@ class AjaxModel extends CI_Model{
         switch ($role){
             case 'trainer':
                 $q = $this->db->query('select u.first_name, u.last_name,'
+                        . ' b.type, co.pay_iude, co.pay_other, co.pay_not,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
-                        . ' comp_list cl'
+                        . ' comp_list cl, bellydance b, competitions co'
                         . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
                         . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
                         . ' and cl.comp_id='.$comp_id.' and d.trainer_id='.$role_id.''
+                        . ' and d.bell_id=b.id and co.id=cl.comp_id'
+                        . ' group by cl.part');
+                $res = $q->result_array();
+                break;
+            case 'admin':
+                $q = $this->db->query('select u.first_name, u.last_name,'
+                        . ' b.type, co.pay_iude, co.pay_other, co.pay_not,'
+                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
+                        . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
+                        . ' comp_list cl, bellydance b, competitions co'
+                        . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
+                        . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
+                        . ' and d.bell_id=b.id and cl.comp_id='.$comp_id.' and co.id=cl.comp_id '
                         . ' group by cl.part');
                 $res = $q->result_array();
                 break;
@@ -489,6 +507,9 @@ class AjaxModel extends CI_Model{
         foreach ($rows as $row){
             $html.=$row['last_name'].' '.$row['first_name'].',';
             $html.=$row['style'].' '.$row['age_cat'].' '.$row['count_cat'].' '.$row['lig'];
+            if ($row['type']==1) $html.=','.$row['pay_iude'];
+            if ($row['type']==2) $html.=','.$row['pay_other'];
+            if ($row['type']==3) $html.=','.$row['pay_not'];
             $html.="\r\n";
         }
         //$name='csv/'.$this->session->id.'.csv';

@@ -9,6 +9,9 @@
             </div>
             <div class="modal-body">
                 <form id="edit_form">
+                    <div class="row">
+                    <div class="col-md-6">
+
                     <input type="hidden" id="e_id" name="id">
                     <div class="form-group">
                         <label>
@@ -84,6 +87,28 @@
                             <?php echo $statuses;?>
                         </select>
                     </div>
+                    </div>
+                         <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Оплата для танцоров IUDE
+                                    <input type="number" id="e_pay_iude" name="pay_iude" class="form-control input-sm">
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    Оплата для танцоров других организаций
+                                    <input type="number" id="e_pay_other" name="pay_other" class="form-control input-sm">
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    Оплата для танцоров без организации
+                                    <input type="number" id="e_pay_not" name="pay_not" class="form-control input-sm">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <br>
@@ -106,6 +131,8 @@
             </div>
             <div class="modal-body">
                 <form id="add_form">
+                    <div class="row">
+                        <div class="col-md-6">
                     <div class="form-group">
                         <label>
                             Название
@@ -175,6 +202,28 @@
                             <input type="date" id="n_date_close" name="date_close" placeholder="окончание конкурса..." class="form-control input-sm">
                         </label>
                     </div>
+                </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>
+                                    Оплата для танцоров IUDE
+                                    <input type="number" id="n_pay_iude" name="pay_iude" class="form-control input-sm">
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    Оплата для танцоров других организаций
+                                    <input type="number" id="n_pay_other" name="pay_other" class="form-control input-sm">
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    Оплата для танцоров без организации
+                                    <input type="number" id="n_pay_not" name="pay_not" class="form-control input-sm">
+                                </label>
+                            </div>
+                        </div>
+                </div>
                 </form>
             </div>
             <br>
@@ -204,6 +253,9 @@
                 <p>Регистрация: <span id="i_reg"></span></p>
                 <p>Проведение: <span id="i_date"></span></p>
                 <p>Статус: <span id="i_status"></span></p>
+                <p>Оплата для танцоров IUDE: <span id="i_pay_iude"></span></p>
+                <p>Оплата для танцоров др.орг.: <span id="i_pay_other"></span></p>
+                <p>Оплата для танцоров без орг.: <span id="i_pay_not"></span></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" data-dismiss="modal">Закрыть</button>

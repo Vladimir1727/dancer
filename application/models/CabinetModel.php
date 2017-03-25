@@ -458,7 +458,7 @@ class CabinetModel extends CI_Model{
             if ($role=="admin"){
             $html.='<button class="btn btn-warning btn-sm edit" id="e'.$r->id
                     .'" data-toggle="modal" data-target="#editmodal">edit</button> ';    
-                $html.=' <a href="../cabinet/competition/'.$r->id.'" class="btn btn-default btn-sm comp" id="c'.$r->id.'">управление</a>';
+                $html.=' <a href="../cabinet/admincompetition/'.$r->id.'" class="btn btn-default btn-sm comp" id="c'.$r->id.'">управление</a>';
             }
             if ($role=="trainer"){
                 if (strtotime($r->date_reg_open)<time() && strtotime($r->date_reg_close)>time() && $r->status=='ON'){

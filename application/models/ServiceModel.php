@@ -209,7 +209,10 @@ class ServiceModel extends CI_Model{
                         . 'status_id int,'
                         . 'foreign key (status_id) references statuses(id),'
                         . 'org_id int,'
-                        . 'foreign key (org_id) references organizers(id)'
+                        . 'foreign key (org_id) references organizers(id),'
+                        . 'pay_iude tinyint,'
+                        . 'pay_other tinyint,'
+                        . 'pay_not tinyint'
                         . ')default charset=utf8';
                 $this->db->query($competition);
                 $exp='create table experience('
@@ -222,7 +225,7 @@ class ServiceModel extends CI_Model{
                          . 'way_id int,'
                         . 'foreign key (way_id) references ways(id) on update cascade'
                         . ')default charset=utf8';
-                $this->db->query($exp);*/
+                $this->db->query($exp);
                 $comp_list='create table comp_list('
                         . 'id int not null auto_increment primary key,'
                         . 'dancer_id int,'
@@ -240,7 +243,7 @@ class ServiceModel extends CI_Model{
                         . 'print_number int,'
                         . 'part int'
                         . ')default charset=utf8';
-                $this->db->query($comp_list);
+                $this->db->query($comp_list);*/
 		return true;
 	}
 

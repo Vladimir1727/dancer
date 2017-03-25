@@ -308,6 +308,20 @@ class Cabinet extends CI_Controller
         }
     }
     
+    public function admincompetition($id){
+        if ($this->session->admin != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $comp_list=$this->AjaxModel->getCompListHtml($id, 'admin');
+            $data=array(
+                'comp_id'=>$id,
+                'comp_list'=>$comp_list
+            );
+            $this->load->view('admin/competition',$data);
+        }
+    }
+    
     public function test()
     {
     echo "TEST <br>";
