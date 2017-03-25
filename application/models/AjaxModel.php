@@ -418,4 +418,66 @@ class AjaxModel extends CI_Model{
     {
         return $this->db->insert('experience', $data);
     }
+    
+    public function addSummCats($data)
+    {
+        $dancers=$data['dancers'];
+        $cats=$data['cats'];
+        $comp_id=$data['competition'][0]['value'];
+        
+        foreach ($cats as $cat){
+            $q = $this->db->query('select MAX(part) as max_part from comp_list');
+            $res = $q->result();
+            $prev_part = $res[0]->max_part;
+            if (is_null($prev_part)){
+                $next_part = 1;
+            }else{
+                $next_part = $prev_part + 1;
+            }
+            foreach ($dancers as $dancer){
+                $ins=array(
+                    'dancer_id'=>$dancer['value'],
+                    'lig_id'=>$cat['lig_id'],
+                    'style_id'=>$cat['style_id'],
+                    'age_id'=>$cat['age_id'],
+                    'count_id'=>$cat['count_id'],
+                    'comp_id'=>$comp_id,
+                    'part'=>$next_part
+                        );
+                $this->db->insert('comp_list',$ins);
+            }
+        }
+        return true;
+    }
+    
+    public function getCompListHtml($comp_id, $role, $role_id)
+    {
+        $rows = $this->getCompList($comp_id, $role, $role_id);
+        $html='';
+        foreach ($rows as $row){
+            $html.='<tr>';
+            $html.='<td>'.$row['last_name'].' '.$row['first_name'].'</td>';
+            $html.='<td>'.$row['style'].' '.$row['age_cat'].' '.$row['count_cat'].' '.$row['lig'].'</td>';
+            $html.='</tr>';
+        }
+        return $html;
+    }
+    
+    public function getCompList($comp_id, $role, $role_id)
+    {
+        switch ($role){
+            case 'trainer':
+                $q = $this->db->query('select u.first_name, u.last_name,'
+                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
+                        . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
+                        . ' comp_list cl'
+                        . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
+                        . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
+                        . ' and cl.comp_id='.$comp_id.' and d.trainer_id='.$role_id.''
+                        . ' group by cl.part');
+                $res = $q->result_array();
+                break;
+        }
+        return $res;
+    }
 }

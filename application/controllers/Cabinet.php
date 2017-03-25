@@ -9,6 +9,7 @@ class Cabinet extends CI_Controller
         parent::__construct();
         $this->load->database();
         $this->load->model('CabinetModel');
+        $this->load->model('AjaxModel');
         $this->load->library('session');
         $this->load->library('pagination');    
     }
@@ -272,12 +273,15 @@ class Cabinet extends CI_Controller
             $this->load->view('errors/error_access');
         }
         else {
-        $dancers = $this->CabinetModel->allDancersToComp('trainer');
-        $data=array(
-            'dancers'=>$dancers,
-            'comp_id'=>$id
-        );
-        $this->load->view('trainer/adddancerstocomp',$data);
+            $trainer_id = $this->AjaxModel->getTrainerId($this->session->id);
+            $comp_list=$this->AjaxModel->getCompListHtml($id, 'trainer', $trainer_id);
+            $dancers = $this->CabinetModel->allDancersToComp('trainer');
+            $data=array(
+                'dancers'=>$dancers,
+                'comp_id'=>$id,
+                'comp_list'=>$comp_list
+            );
+            $this->load->view('trainer/adddancerstocomp',$data);
         }
     }
     

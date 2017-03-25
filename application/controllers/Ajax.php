@@ -279,6 +279,21 @@ class Ajax extends CI_Controller {
         echo $ins=$this->AjaxModel->saveExp($_POST);
     }
     
+    public function addSummCats()
+    {
+        $ins= $this->AjaxModel->addSummCats($_POST);
+        echo $ins;
+        
+    }
+    
+    public function getCompListTrainer()
+    {
+        $trainer_id = $this->AjaxModel->getTrainerId($this->session->id);
+        $comp_id = $_POST['comp_id'];
+        $list = $this->AjaxModel->getCompListHtml($comp_id, 'trainer', $trainer_id);
+        echo $list;
+    }
+    
     public function test()
     {
         echo "TEST <br>";
@@ -293,6 +308,5 @@ class Ajax extends CI_Controller {
         echo json_encode($user);*/
         echo $this->AjaxModel->getTrainerId(5);
     }
-    
-    
+      
 }

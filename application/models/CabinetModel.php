@@ -597,7 +597,7 @@ class CabinetModel extends CI_Model{
                         $html.='<input type="hidden" name="age_id" value="'.$age['id'].'">';
                         $html.='<input type="hidden" name="count_id" value="'.$count['id'].'">';
                         $html.='<input type="hidden" name="lig_id" value="'.$lig['id'].'">';
-                        $html.='<input type="checkbox" id="cat'.$i.'">';
+                        $html.='<input type="checkbox" id="cat'.$i.'" class="sum_cat">';
                         $html.=$i.' '.$style['style'].' '.$age['name'].' '.$count['name'].' '.$lig['name'];
                         $html.='</form>';
                         $html.='</td></tr>';
