@@ -4,6 +4,7 @@ class AjaxModel extends CI_Model{
             parent::__construct();
             $this->load->database();
             $this->load->library('session');
+            $this->load->helper('file');
     }
 
     function getUserInfo($id){
@@ -479,5 +480,20 @@ class AjaxModel extends CI_Model{
                 break;
         }
         return $res;
+    }
+    
+    public function getCompListCsv($comp_id, $role, $role_id)
+    {
+        $rows = $this->getCompList($comp_id, $role, $role_id);
+        $html='';
+        foreach ($rows as $row){
+            $html.=$row['last_name'].' '.$row['first_name'].',';
+            $html.=$row['style'].' '.$row['age_cat'].' '.$row['count_cat'].' '.$row['lig'];
+            $html.="\r\n";
+        }
+        //$name='csv/'.$this->session->id.'.csv';
+        //write_file($name, $html, 'w');
+        force_download('list.csv',$html);
+        return $name;
     }
 }

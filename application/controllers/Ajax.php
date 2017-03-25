@@ -10,6 +10,7 @@ class Ajax extends CI_Controller {
 		$this->load->model('CabinetModel');
 		$this->load->library('session');
 		$this->load->library('pagination');
+                $this->load->helper('download');
 	}
 	/**
 	 * Index Page for this controller.
@@ -306,7 +307,11 @@ class Ajax extends CI_Controller {
         echo 'pages= '.$pages.'<br>';*/
         /*$user=$this->AjaxModel->getUserInfo(1);
         echo json_encode($user);*/
-        echo $this->AjaxModel->getTrainerId(5);
+        //$trainer_id = $this->AjaxModel->getTrainerId($this->session->id);
+        $link=$this->AjaxModel->getCompListCsv(3,'trainer',1);
+        //echo '<a href="'.base_url().$link.'">скачать</a>';
+        //echo '<a href="/csv/1.csv">скачать</a>';
+        
     }
       
 }
