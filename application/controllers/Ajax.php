@@ -295,6 +295,19 @@ class Ajax extends CI_Controller {
         echo $list;
     }
     
+    public function getCompListAdmin()
+    {
+        $comp_id = $_POST['comp_id'];
+        $list = $this->AjaxModel->getCompListHtml($comp_id, 'admin');
+        echo $list;
+    }
+    
+    public function savePays()
+    {
+        $res=$this->AjaxModel->savePays($_POST);
+        var_dump($res);
+    }
+    
     public function test()
     {
         echo "TEST <br>";

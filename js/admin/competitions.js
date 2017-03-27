@@ -10,9 +10,6 @@ $('#new_but').click(function(){
    $('#n_date_close').val('');
    $('#n_city').html('');
    $('#n_ogr').html('');
-   $('#n_pay_iude').val('');
-   $('#n_pay_other').val('');
-   $('#n_pay_not').val('');
    $('#n_regions option').removeAttr('selected');
    $('#n_ways option').removeAttr('selected');
    $('#city_block').hide();
@@ -107,9 +104,6 @@ function addClick(){
                     $('#i_reg').text('с '+modal.date_reg_open+' по '+modal.date_reg_close);
                     $('#i_date').text('с '+modal.date_open+' по '+modal.date_close);
                     $('#i_status').text(modal.status);
-                    $('#i_pay_iude').text(modal.pay_iude);
-                    $('#i_pay_other').text(modal.pay_other);
-                    $('#i_pay_not').text(modal.pay_not);
 		}
             });
 	});
@@ -130,9 +124,6 @@ function addClick(){
                     $('#e_date_reg_close').val(modal.date_reg_close);
                     $('#e_date_open').val(modal.date_open);
                     $('#e_date_close').val(modal.date_close);
-                    $('#e_pay_iude').val(modal.pay_iude);
-                    $('#e_pay_other').val(modal.pay_other);
-                    $('#e_pay_not').val(modal.pay_not);
                     $('#e_regions option').each(function(){
                         if ($(this).val() == modal.region_id){
                             $(this).attr('selected','selected');

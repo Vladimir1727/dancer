@@ -209,10 +209,7 @@ class ServiceModel extends CI_Model{
                         . 'status_id int,'
                         . 'foreign key (status_id) references statuses(id),'
                         . 'org_id int,'
-                        . 'foreign key (org_id) references organizers(id),'
-                        . 'pay_iude tinyint,'
-                        . 'pay_other tinyint,'
-                        . 'pay_not tinyint'
+                        . 'foreign key (org_id) references organizers(id)'
                         . ')default charset=utf8';
                 $this->db->query($competition);
                 $exp='create table experience('
@@ -244,6 +241,19 @@ class ServiceModel extends CI_Model{
                         . 'part int'
                         . ')default charset=utf8';
                 $this->db->query($comp_list);*/
+                $pays='create table pays ('
+                        . 'id int not null auto_increment primary key,'
+                        . 'comp_id int,'
+                        . 'foreign key (comp_id) references competitions(id),'
+                        . 'count_id int,'
+                        . 'foreign key (count_id) references cat_count(id),'
+                        . 'lig_id int,'
+                        . 'foreign key (lig_id) references ligs(id),'
+                        . 'pay_iude int default 0,'
+                        . 'pay_other int default 0,'
+                        . 'pay_not int default 0'
+                        . ')default charset=utf8';
+                $this->db->query($pays);
 		return true;
 	}
 

@@ -661,4 +661,50 @@ class CabinetModel extends CI_Model{
         );
         return $data;
     }
+    
+    public function getPayListHtml($comp_id)
+    {
+        $q = $this->db->query('select DISTINCT count_id, lig_id'
+                . ' from comp_list'
+                . ' where comp_id='.$comp_id);
+        $comp_list = $q->result_array();
+        $q = $this->db->query('select count_id, lig_id'
+                . ' from pays'
+                . ' where comp_id='.$comp_id);
+        $pay_list = $q->result_array();
+        $insert=array();
+        foreach ($comp_list as $c){
+            $find = FALSE;
+            foreach ($pay_list as $p){
+                if ($c['count_id'] == $p['count_id'] && $c['lig_id'] == $p['lig_id']){
+                    $find = TRUE;
+                }
+            }
+            if ($find == FALSE){
+                $insert[]=[
+                    'count_id'=>$c['count_id'],
+                    'lig_id'=>$c['lig_id'],
+                    'comp_id'=>$comp_id
+                        ];
+            }
+        }
+        if (count($insert) > 0) $q= $this->db->insert_batch('pays',$insert);
+        $q = $this->db->query('select p.id, l.name as lig, cc.name,'
+                . ' p.pay_iude, p.pay_other, p.pay_not'
+                . ' from pays p, cat_count cc, ligs l'
+                . ' where p.lig_id=l.id and p.count_id=cc.id and p.comp_id='.$comp_id);
+        $res= $q->result_array();
+        $html='';
+        foreach ($res as $r){
+            $html.='<tr>';
+            $html.='<td>'.$r['name'].'</td>';
+            $html.='<td>'.$r['lig'].'</td>';
+            $html.='<td><input type="hidden" name="id[]" value='.$r['id'].'>';
+            $html.='<input type="text" name="pay_iude[]" value='.$r['pay_iude'].' class="col-xs-5"></td>';
+            $html.='<td><input type="text" name="pay_other[]" value='.$r['pay_other'].' class="col-xs-5"></td>';
+            $html.='<td><input type="text" name="pay_not[]" value='.$r['pay_not'].' class="col-xs-5"></td>';
+            $html.='</tr>';
+        }
+        return $html;
+    }
 }

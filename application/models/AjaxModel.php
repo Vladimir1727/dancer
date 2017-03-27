@@ -473,27 +473,29 @@ class AjaxModel extends CI_Model{
         switch ($role){
             case 'trainer':
                 $q = $this->db->query('select u.first_name, u.last_name,'
-                        . ' b.type, co.pay_iude, co.pay_other, co.pay_not,'
+                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
-                        . ' comp_list cl, bellydance b, competitions co'
+                        . ' comp_list cl, bellydance b, competitions co, pays p'
                         . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
                         . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
+                        . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
                         . ' and cl.comp_id='.$comp_id.' and d.trainer_id='.$role_id.''
                         . ' and d.bell_id=b.id and co.id=cl.comp_id'
-                        . ' group by cl.part');
+                        . ' order by cl.part asc');
                 $res = $q->result_array();
                 break;
             case 'admin':
                 $q = $this->db->query('select u.first_name, u.last_name,'
-                        . ' b.type, co.pay_iude, co.pay_other, co.pay_not,'
+                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
-                        . ' comp_list cl, bellydance b, competitions co'
+                        . ' comp_list cl, bellydance b, pays p'
                         . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
                         . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
-                        . ' and d.bell_id=b.id and cl.comp_id='.$comp_id.' and co.id=cl.comp_id '
-                        . ' group by cl.part');
+                        . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
+                        . ' and d.bell_id=b.id and cl.comp_id='.$comp_id.' '
+                        . ' order by cl.part asc');
                 $res = $q->result_array();
                 break;
         }
@@ -516,5 +518,18 @@ class AjaxModel extends CI_Model{
         //write_file($name, $html, 'w');
         force_download('list.csv',$html);
         return $name;
+    }
+    
+    public function savePays($data){
+        for ($i=0;$i<count($data['id']);$i++){
+            $ins=[
+                'pay_iude'=>$data['pay_iude'][$i],
+                'pay_other'=>$data['pay_other'][$i],
+                'pay_not'=>$data['pay_not'][$i]
+            ];
+            $this->db->where('id',$data['id'][$i]);
+            $this->db->update('pays',$ins);
+        }
+        return true;
     }
 }

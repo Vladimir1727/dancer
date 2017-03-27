@@ -314,9 +314,11 @@ class Cabinet extends CI_Controller
         }
         else {
             $comp_list=$this->AjaxModel->getCompListHtml($id, 'admin');
+            $pay_list=$this->CabinetModel->getPayListHtml($id);
             $data=array(
                 'comp_id'=>$id,
-                'comp_list'=>$comp_list
+                'comp_list'=>$comp_list,
+                'pay_list'=>$pay_list
             );
             $this->load->view('admin/competition',$data);
         }
