@@ -1,5 +1,5 @@
 (function($){$(function(){
-
+        
 $('#ligs_block').hide();
 
 $('#way_select').change(function(){
@@ -70,12 +70,14 @@ function show(){
            addClick();
         }
     });
+        var way_id=$('#way_id').val();
 	$.ajax({
 	url:'../ajax/selectLigs',
 	type:'POST',
-        data:'way='+$('#way_id').val(),
+        data:'way_id='+way_id,
         success: function(data){
             $('#lig_id').html(data);
+            
         }
     });
 }

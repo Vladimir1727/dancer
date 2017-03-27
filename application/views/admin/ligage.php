@@ -44,4 +44,4 @@
     </div>
 </div>
 <?php $this->load->view('footer'); ?>
-<script src="<?php echo base_url(); ?>/js/admin_ligage.js"></script>
+<script src="<?php echo base_url(); ?>/js/admin/ligage.js"></script>

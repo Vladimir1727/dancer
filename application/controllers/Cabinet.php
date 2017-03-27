@@ -172,7 +172,7 @@ class Cabinet extends CI_Controller
             $this->load->view('errors/error_access');
         }
         else {
-                        $ages=$this->CabinetModel->selectAges();
+            $ages=$this->CabinetModel->selectAges();
             $ways=$this->CabinetModel->selectWays();
             $this->load->view('admin/ligage',['ways'=>$ways,'ages'=>$ages]);
         }
