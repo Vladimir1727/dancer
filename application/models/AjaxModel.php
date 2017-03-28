@@ -449,6 +449,28 @@ class AjaxModel extends CI_Model{
                 $this->db->insert('comp_list',$ins);
             }
         }
+        
+        $q = $this->db->query('select count_id, lig_id'
+                . ' from pays'
+                . ' where comp_id='.$comp_id);
+        $pay_list = $q->result_array();
+        $insert=array();
+        foreach ($cats as $c){
+            $find = FALSE;
+            foreach ($pay_list as $p){
+                if ($c['count_id'] == $p['count_id'] && $c['lig_id'] == $p['lig_id']){
+                    $find = TRUE;
+                }
+            }
+            if ($find == FALSE){
+                $insert[]=[
+                    'count_id'=>$c['count_id'],
+                    'lig_id'=>$c['lig_id'],
+                    'comp_id'=>$comp_id
+                        ];
+            }
+        }
+        if (count($insert) > 0) $q= $this->db->insert_batch('pays',$insert);
         return true;
     }
     
@@ -476,12 +498,12 @@ class AjaxModel extends CI_Model{
                         . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
-                        . ' comp_list cl, bellydance b, competitions co, pays p'
+                        . ' comp_list cl, bellydance b, pays p'
                         . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
                         . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
                         . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
                         . ' and cl.comp_id='.$comp_id.' and d.trainer_id='.$role_id.''
-                        . ' and d.bell_id=b.id and co.id=cl.comp_id'
+                        . ' and d.bell_id=b.id'
                         . ' order by cl.part asc');
                 $res = $q->result_array();
                 break;
@@ -520,7 +542,8 @@ class AjaxModel extends CI_Model{
         return $name;
     }
     
-    public function savePays($data){
+    public function savePays($data)
+    {
         for ($i=0;$i<count($data['id']);$i++){
             $ins=[
                 'pay_iude'=>$data['pay_iude'][$i],
@@ -532,4 +555,113 @@ class AjaxModel extends CI_Model{
         }
         return true;
     }
+    
+    public function getCompReward($comp_id)
+    {
+        $sum_medal1=0;
+        $sum_medal2=0;
+        $sum_medal3=0;
+        $sum_kub1=0;
+        $sum_kub2=0;
+        $sum_kub3=0;
+        $q = $this->db->query('select count(cl.id) as solo'
+                . ' from comp_list cl, ligs l, cat_count cc'
+                . ' where cl.lig_id=l.id and cl.count_id=cc.id'
+                . ' and cc.name="Соло" and l.name="Дебют" and cl.comp_id='.$comp_id);
+        $res = $q->result_array();
+        $html='<tr><td>Дебют Соло</td><td>'.$res[0]['solo'].'</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
+        
+        $q = $this->db->query('select DISTINCT l.name as lig_name, cc.name as count_name,'
+                . ' cl.lig_id, cl.style_id, cl.age_id, cl.count_id, cl.part'
+                . ' from comp_list cl, ligs l, cat_count cc'
+                . ' where cl.lig_id=l.id and cl.count_id=cc.id and cl.comp_id='.$comp_id.' '
+                . '  order by cl.style_id, cl.age_id ASC');
+        $data= $q->result_array();
+        
+        $q = $this->db->query('select DISTINCT cc.max_count, l.name as lig_name, cc.name as count_name,'
+                . ' cl.lig_id, cl.count_id'
+                . ' from comp_list cl, cat_count cc, ligs l'
+                . ' where cl.lig_id=l.id and cl.count_id=cc.id'
+                . ' and not (l.name="Дебют" and cc.name="Соло")'
+                . ' and cl.comp_id='.$comp_id);
+        $cats= $q->result_array();
+           
+        $data_sum = [];
+        $data_sum[0] = [];
+        $data_sum[0]['lig_id'] = $data[0]['lig_id'];
+        $data_sum[0]['style_id'] = $data[0]['style_id'];
+        $data_sum[0]['age_id'] = $data[0]['age_id'];
+        $data_sum[0]['count_id'] = $data[0]['count_id'];
+        $data_sum[0]['count']=0;
+        
+        foreach($data as $d){
+            $new = TRUE;
+            foreach ($data_sum as $k => $ds){
+                if ($ds['lig_id'] == $d['lig_id'] && $ds['style_id'] == $d['style_id'] 
+                    && $ds['count_id'] == $d['count_id'] && $ds['age_id'] == $d['age_id']){
+                    $new=FALSE;
+                    $data_sum[$k]['count']++;
+                }
+            }
+            if ($new){
+                $index=count($data_sum);
+                $data_sum[$index]['lig_id'] = $d['lig_id'];
+                $data_sum[$index]['style_id'] = $d['style_id'];
+                $data_sum[$index]['age_id'] = $d['age_id'];
+                $data_sum[$index]['count_id'] = $d['count_id'];
+                $data_sum[$index]['count']=1;
+            }
+        }
+        
+        $sum_medal1=0;
+        $sum_medal2=0;
+        $sum_medal3=0;
+        $sum_kub1=0;
+        $sum_kub2=0;
+        $sum_kub3=0;
+        foreach ($cats as $cat){
+            $medal1=0;
+            $medal2=0;
+            $medal3=0;
+            $kub1=0;
+            $kub2=0;
+            $kub3=0;
+            $count=0;
+            foreach ($data_sum as $d){
+                if ($cat['lig_id'] == $d['lig_id'] && $cat['count_id'] == $d['count_id']){
+                    if ($cat['max_count']<4){
+                        $medal1++;
+                        if ($d['count']>1){
+                            $medal2++;
+                        }
+                        if ($d['count']>2){
+                            $medal3++;
+                        }
+                    }else{
+                        $kub1++;
+                        if ($d['count']>1){
+                            $kub2++;
+                        }
+                        if ($d['count']>2){
+                            $kub3++;
+                        }
+                    }
+                }
+            }
+            $sum_medal1+=$medal1;
+            $sum_medal2+=$medal2;
+            $sum_medal3+=$medal3;
+            $sum_kub1+=$kub1;
+            $sum_kub2+=$kub2;
+            $sum_kub3+=$kub3;
+            $html.='<tr><td>'.$cat['count_name'].' '.$cat['lig_name'].'</td><td>-</td>'
+                    .'<td>'.$medal1.'</td><td>'.$medal2.'</td><td>'.$medal3.'</td>'
+                    . '<td>'.$kub1.'</td><td>'.$kub2.'</td><td>'.$kub3.'</td></tr>';
+        }
+        $html.='<tr class="success"><td>ИТОГО</td><td>-</td>'
+                    .'<td>'.$sum_medal1.'</td><td>'.$sum_medal2.'</td><td>'.$sum_medal3.'</td>'
+                    . '<td>'.$sum_kub1.'</td><td>'.$sum_kub2.'</td><td>'.$sum_kub3.'</td></tr>';
+        return $html;   
+    }
+    
 }

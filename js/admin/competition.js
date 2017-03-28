@@ -23,4 +23,15 @@ function show(){
     });
 }
 
+$('#reward_but').click(function(){
+    $.ajax({
+        url:'../../ajax/getCompReward',
+        type:'POST',
+        data:'comp_id='+$('#comp_id').val(),
+        success: function(data){
+            $('#reward_table tbody').html(data);
+        }
+    });
+});
+
 })})(jQuery)

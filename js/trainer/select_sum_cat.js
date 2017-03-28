@@ -41,7 +41,6 @@ function show(){
         type:'POST',
         data:'comp_id='+$('#comp_id').val(),
         success: function(data){
-            console.log(data);
             $('#comp_list').html(data);
         }
     });

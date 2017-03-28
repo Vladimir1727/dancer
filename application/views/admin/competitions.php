@@ -97,6 +97,8 @@
         </div>
     </div>
 </div>
+    </div>
+    </div>
 <!-- End Modal -->
 
 <!--New Modal-->
@@ -222,7 +224,6 @@
 <!-- End Modal -->
 
 <?php include_once 'menu.php';?>
-<h1 class="h1 text-success">Конкурсы</h1>
 <div class="row">
     <div class="col-md-2">
         <button class="btn btn-success" id="new_but" data-toggle="modal" data-target="#newmodal">Создать</button>

@@ -326,5 +326,9 @@ class Ajax extends CI_Controller {
         //echo '<a href="/csv/1.csv">скачать</a>';
         
     }
-      
+    
+    public function getCompReward()
+    {
+        echo $this->AjaxModel->getCompReward($_POST['comp_id']);
+    }
 }
