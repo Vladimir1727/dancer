@@ -324,6 +324,14 @@ class Cabinet extends CI_Controller
         }
     }
     
+    public function numbers($comp_id)
+    {
+        $res= $this->CabinetModel->getNumbers($comp_id);
+        $res['comp_id']=$comp_id;
+        $this->load->view('admin/numbers',$res);
+    }
+
+
     public function test()
     {
     echo "TEST <br>";

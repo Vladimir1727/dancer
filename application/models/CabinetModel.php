@@ -707,4 +707,115 @@ class CabinetModel extends CI_Model{
         }
         return $html;
     }
+    
+    public function setNumbers($comp_id)
+    {
+        $q = $this->db->query('select DISTINCT t.club_id'
+                . ' from comp_list cl, dancers d, trainers t'
+                . ' where cl.dancer_id=d.id and d.trainer_id=t.id and cl.comp_id='.$comp_id);
+        $clubs = $q->result_array();
+        $q = $this->db->query('select DISTINCT '
+                . ' cl.dancer_id,'
+                . ' t.club_id, cl.count_id'
+                . ' from comp_list as cl, cat_count as cc, '
+                . ' dancers as d, users as u, trainers as t'
+                . ' where cl.count_id=cc.id and d.user_id=u.id'
+                . ' and cl.dancer_id=d.id and d.trainer_id=t.id'
+                . ' and cc.max_count=1 and cl.comp_id='.$comp_id.''
+                . ' order by t.club_id, u.last_name asc');
+        $data = $q->result_array();
+        $count=count($clubs);
+        $rand=[];
+        foreach ($clubs as $k=> $v){
+            do {
+                $r=  rand(0,$count-1);
+            } while (in_array($r, $rand));
+            $rand[]=$r;
+            //$clubs[$k]['n']=$r;
+        }
+        $number=0;
+        foreach ($rand as $r){
+            foreach ($data as $d){
+                if ($d['club_id'] == $clubs[$r]['club_id']){
+                    $number++;
+                    $w=[
+                        'dancer_id' => $d['dancer_id'],
+                        'count_id' => $d['count_id'],
+                        ];
+                    $ins=['print_number'=>$number];
+                    $this->db->where($w);
+                    $this->db->update('comp_list',$ins);
+                }
+            }
+        }
+        $q = $this->db->query('select DISTINCT cl.lig_id, cl.style_id, cl.count_id, cl.age_id,'
+                . ' t.club_id, cl.part'
+                . ' from comp_list as cl, cat_count as cc, trainers as t, dancers as d'
+                . ' where cl.count_id=cc.id and cl.dancer_id=d.id and d.trainer_id=t.id'
+                . ' and cl.comp_id='.$comp_id.' and cc.max_count>1'
+                . ' order by t.club_id asc');
+        $data = $q->result_array();
+        foreach ($rand as $r){
+            foreach ($data as $d){
+                if ($d['club_id'] == $clubs[$r]['club_id']){
+                    $number++;
+                    $w=['part' => $d['part']];
+                    $ins=['print_number'=>$number];
+                    $this->db->where($w);
+                    $this->db->update('comp_list',$ins);
+                }
+            }
+        }
+        return true;
+    }
+    
+    public function getNumbers($comp_id)
+    {
+        $q = $this->db->query('select DISTINCT u.last_name, u.first_name, l.print_number'
+                . ' from comp_list as l, users as u, dancers as d, cat_count as cc'
+                . ' where l.dancer_id=d.id and d.user_id=u.id and cc.max_count=1'
+                . ' and l.count_id=cc.id and l.comp_id='.$comp_id.''
+                . ' order by l.print_number asc');
+        $row = $q->result_array();
+        $hs='';
+        foreach ($row as $r){
+            $hs.='<tr>';
+            $hs.='<td>'.$r['last_name'].' '.$r['first_name'].'</td>';
+            $hs.='<td>'.$r['print_number'].'</td>';
+            $hs.='</tr>';
+        }
+        $q = $this->db->query('select DISTINCT u.last_name, u.first_name, cl.print_number, cl.dancer_id,'
+                . ' l.name as lig_name, cc.name as count_name, a.name as age_name, s.style'
+                . ' from comp_list as cl, users as u, dancers as d, cat_count as cc,'
+                . ' cat_age as a, styles as s, ligs as l'
+                . ' where cl.dancer_id=d.id and d.user_id=u.id and cc.max_count>1'
+                . ' and cl.lig_id=l.id and cl.count_id=cc.id and cl.age_id=a.id and cl.style_id=s.id'
+                . ' and cl.count_id=cc.id and cl.comp_id='.$comp_id.''
+                . ' order by cl.print_number asc');
+        $row = $q->result_array();
+        $hg='';
+        $count = count($row);
+        for ($i=0;$i<$count;$i++){
+            if ($i==0){
+                $hg.='<tr>';
+                $hg.='<td>'.$row[$i]['style'].' '.$row[$i]['age_name'].' '.$row[$i]['count_name'].' '.$row[$i]['lig_name'].'</td>';
+                $hg.='<td>'.$row[$i]['last_name'].' '.$row[$i]['first_name'];
+            } elseif ($row[$i]['print_number']!=$row[$i-1]['print_number']){
+                $hg.='<tr>';
+                $hg.='<td>'.$row[$i]['style'].' '.$row[$i]['age_name'].' '.$row[$i]['count_name'].' '.$row[$i]['lig_name'].'</td>';
+                $hg.='<td>'.$row[$i]['last_name'].' '.$row[$i]['first_name'];
+            } else{
+                $hg.='<br>'.$row[$i]['last_name'].' '.$row[$i]['first_name'];
+            }
+            
+            if ($i==($count-1)){
+                $hg.='</td><td>'.$row[$i]['print_number'].'</td></tr>';
+            }elseif ($row[$i]['print_number']!=$row[$i+1]['print_number']){
+                $hg.='</td><td>'.$row[$i]['print_number'].'</td></tr>';
+            }
+            
+        }
+        $res=['solo'=>$hs,'group'=>$hg];
+        return $res;
+    }
 }

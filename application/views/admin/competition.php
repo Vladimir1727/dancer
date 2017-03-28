@@ -36,6 +36,7 @@
 <?php include_once 'menu.php';?>
 <h1 class="h1 text-success">Конкурс</h1>
 <button class="btn btn-info" id="reward_but" data-toggle="modal" data-target="#rewardmodal">Для награждения</button>
+<a class="btn btn-info" href="../numbers/<?php echo $comp_id; ?>" target="_blank">Номера участников</a>
 <div class="row">
     <div class="col-md-4">
         <table class="table table-striped" id="main_table">
@@ -54,7 +55,7 @@
     </div>
     <div class="col-md-8">
         <form id="pay_form">
-            <input type="hidden" value="<?php echo $comp_id ?>" id="comp_id">
+            <input type="hidden" value="<?php echo $comp_id; ?>" id="comp_id">
             <table class="table table-striped" id="main_table">
                 <caption>Оплата</caption>
                 <tbody>

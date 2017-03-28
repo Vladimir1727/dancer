@@ -331,4 +331,15 @@ class Ajax extends CI_Controller {
     {
         echo $this->AjaxModel->getCompReward($_POST['comp_id']);
     }
+    
+    public function setNumbers()
+    {
+        echo $this->CabinetModel->setNumbers($_POST['comp_id']);
+    }
+    
+    public function getNumbers()
+    {
+        $res=$this->CabinetModel->getNumbers($_POST['comp_id']);
+        echo json_encode($res);
+    }
 }
