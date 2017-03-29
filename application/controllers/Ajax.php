@@ -307,26 +307,7 @@ class Ajax extends CI_Controller {
         $res=$this->AjaxModel->savePays($_POST);
         var_dump($res);
     }
-    
-    public function test()
-    {
-        echo "TEST <br>";
-        /*$rows=6;
-        $in_page=5;
-        $tall=$rows%$in_page;
-        $rows-=$tall;
-        $pages=round($rows/$in_page);
-        if ($tall>0) $pages+=1;
-        echo 'pages= '.$pages.'<br>';*/
-        /*$user=$this->AjaxModel->getUserInfo(1);
-        echo json_encode($user);*/
-        //$trainer_id = $this->AjaxModel->getTrainerId($this->session->id);
-        $link=$this->AjaxModel->getCompListCsv(3,'trainer',1);
-        //echo '<a href="'.base_url().$link.'">скачать</a>';
-        //echo '<a href="/csv/1.csv">скачать</a>';
-        
-    }
-    
+
     public function getCompReward()
     {
         echo $this->AjaxModel->getCompReward($_POST['comp_id']);
@@ -341,5 +322,31 @@ class Ajax extends CI_Controller {
     {
         $res=$this->CabinetModel->getNumbers($_POST['comp_id']);
         echo json_encode($res);
+    }
+    
+    public function uploadResult()
+    {
+        $comp_id = $_POST['comp_id'];
+        $f=move_uploaded_file($_FILES[0]['tmp_name'],'csv/'.$_FILES[0]['name']);
+        $file=$_FILES[0]['name'];
+        $res=$this->AjaxModel->uploadResult($file, $comp_id);
+        echo $res;
+    }
+    
+    public function getResult()
+    {
+        $comp_id=$_POST['comp_id'];
+        $data=$this->AjaxModel->getResultCsv($comp_id, 'admin');
+        echo $data;
+    }
+    
+    public function test()
+    {
+        echo "TEST <br>";
+        $file="list1.csv";
+        $res=$this->AjaxModel->uploadResult($file,3);
+        echo "<pre>";
+        var_dump($res);
+        echo "</pre>";
     }
 }

@@ -536,10 +536,56 @@ class AjaxModel extends CI_Model{
             if ($row['type']==3) $html.=','.$row['pay_not'];
             $html.="\r\n";
         }
-        //$name='csv/'.$this->session->id.'.csv';
-        //write_file($name, $html, 'w');
         force_download('list.csv',$html);
         return $name;
+    }
+    
+    public function getResultCsv($comp_id, $role, $role_id = 0)
+    {
+        $rows = $this->getCompResult($comp_id, $role, $role_id);
+        $html='';
+        foreach ($rows as $row){
+            $html.=$row['last_name'].' '.$row['first_name'].',';
+            $html.=$row['city'].',';
+            $html.=$row['title'].',';
+            $html.=$row['tr_last_name'].' '.$row['tr_first_name'].',';
+            $html.=substr($row['birthdate'],0,4).',';
+            $ytime = time() - strtotime($row['birthdate']);
+            $year = ($ytime - $ytime % 31556926) / 31556926;
+            $html.=$year.',';
+            $html.=$row['style'].',';
+            $html.=$row['count'].',';
+            $html.=$row['lig'].',';
+            $html.=$row['place'];
+            $html.="\r\n";
+        }
+        $file='csv/list'.$this->session->id.'.csv';
+        $h=fopen($file,"w");
+        fwrite($h, $html);
+        fclose($h);
+        return $file;
+    }
+    
+    public function getCompResult($comp_id, $role, $role_id)
+    {
+        switch ($role){
+            case 'trainer':
+                break;
+            case 'admin':
+                $q = $this->db->query('select comp_list.id, users.last_name, users.first_name, cities.city, clubers.title,'
+                        . ' (select u.last_name from users u, trainers t where t.user_id=u.id and dancers.trainer_id=t.id) as tr_last_name,'
+                        . ' (select u.first_name from users u, trainers t where t.user_id=u.id and dancers.trainer_id=t.id) as tr_first_name,'
+                        . ' dancers.birthdate, styles.style, cat_count.name as count, ligs.name as lig, comp_list.place'
+                        . ' from dancers, users, trainers, comp_list, cities, clubers, styles,'
+                        . ' cat_count, ligs'
+                        . ' where comp_list.dancer_id=dancers.id and dancers.user_id=users.id'
+                        . ' and dancers.trainer_id=trainers.id and trainers.club_id=clubers.id'
+                        . ' and clubers.city_id=cities.id and comp_list.count_id=cat_count.id'
+                        . ' and comp_list.lig_id=ligs.id and comp_list.style_id=styles.id and comp_id='.$comp_id);
+                $res = $q->result_array();
+                break;
+        }
+        return $res;
     }
     
     public function savePays($data)
@@ -664,4 +710,62 @@ class AjaxModel extends CI_Model{
         return $html;   
     }
     
+    public function uploadResult($file, $comp_id)
+    {
+        $data=[];
+        $handle = fopen("csv/".$file, "r");
+        while($str = fgets($handle)){
+            $res = explode(",",$str);
+            $data[] = [
+                'name'=>trim($res[0]),
+                'city'=>trim($res[1]),
+                'club'=>trim($res[2]),
+                'trainer'=>trim($res[3]),
+                'year'=>trim($res[4]),
+                'age'=>trim($res[5]),
+                'style'=>trim($res[6]),
+                'count_name'=>trim($res[7]),
+                'lig'=>trim($res[8]),
+                'place'=>trim($res[9]),
+            ];
+        }
+        fclose($handle);
+        unlink("csv/".$file);
+        $comp_list = $this->getCompResult($comp_id, 'admin', 0);
+        $lost_arr=[];
+        foreach ($data as $d){
+            $lost=true;
+            foreach ($comp_list as $c){
+                $ytime = time() - strtotime($c['birthdate']);
+                $year = ($ytime - $ytime % 31556926) / 31556926;
+                if ($d['name']==($c['last_name'].' '.$c['first_name']) && $d['city']==$c['city']
+                        && $d['club']==$c['title'] && $d['trainer']==($c['tr_last_name'].' '.$c['tr_first_name'])
+                        && $d['year']==substr($c['birthdate'],0,4) && $d['style']==$c['style']
+                        && $d['count_name']==$c['count'] && $c['lig']==$d['lig']){
+                    $lost=false;
+                    $this->db->where('id',$c['id']);
+                    $this->db->update('comp_list',['place'=>$d['place']]);
+                }
+            }
+            if ($lost){
+                $lost_arr[]=$d;
+            }
+        }
+        $html = '';
+        foreach ($lost_arr as $l){
+            $html.='<tr>';
+            $html.='<td>'.$l['name'].'</td>';
+            $html.='<td>'.$l['city'].'</td>';
+            $html.='<td>'.$l['club'].'</td>';
+            $html.='<td>'.$l['trainer'].'</td>';
+            $html.='<td>'.$l['year'].'</td>';
+            $html.='<td>'.$l['age'].'</td>';
+            $html.='<td>'.$l['style'].'</td>';
+            $html.='<td>'.$l['count_name'].'</td>';
+            $html.='<td>'.$l['lig'].'</td>';
+            $html.='<td>'.$l['place'].'</td>';
+            $html.='</tr>';
+        }
+        return $html;
+    }
 }

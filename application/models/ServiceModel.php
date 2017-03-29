@@ -238,7 +238,9 @@ class ServiceModel extends CI_Model{
                         . 'count_id int,'
                         . 'foreign key (count_id) references cat_count(id),'
                         . 'print_number int,'
-                        . 'part int'
+                        . 'part int,'
+                        . 'place int default 0,'
+                        . 'ponts int default 0'
                         . ')default charset=utf8';
                 $this->db->query($comp_list);*/
                 $pays='create table pays ('

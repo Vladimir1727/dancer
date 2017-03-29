@@ -330,7 +330,12 @@ class Cabinet extends CI_Controller
         $res['comp_id']=$comp_id;
         $this->load->view('admin/numbers',$res);
     }
-
+    
+    public function uploadResults($comp_id)
+    {
+        $file=$this->AjaxModel->getResultCsv($comp_id, 'admin');
+        $this->load->view('admin/upload',['comp_id'=>$comp_id,'file'=>$file]);
+    }
 
     public function test()
     {
