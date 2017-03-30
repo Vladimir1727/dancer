@@ -545,6 +545,19 @@ class AjaxModel extends CI_Model{
                         . ' order by cl.part asc');
                 $res = $q->result_array();
                 break;
+            case 'organizer':
+                $q = $this->db->query('select u.first_name, u.last_name,'
+                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
+                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
+                        . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
+                        . ' comp_list cl, bellydance b, pays p'
+                        . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
+                        . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
+                        . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
+                        . ' and d.bell_id=b.id and cl.comp_id='.$comp_id.' '
+                        . ' order by cl.part asc');
+                $res = $q->result_array();
+                break;
         }
         return $res;
     }
@@ -800,7 +813,7 @@ class AjaxModel extends CI_Model{
                 . ' from competitions c, statuses s'
                 . ' where c.status_id=s.id and c.id='.$comp_id);
         $res = $q->result();
-        //if ($res[0]->status == 'DONE') return 'NO';
+        if ($res[0]->status == 'DONE') return 'NO';
         $this->db->query('update competitions'
                 . ' set status_id=(select id from statuses where status="DONE")'
                 . ' where id='.$comp_id);

@@ -152,6 +152,16 @@ class CabinetModel extends CI_Model{
 	where t.user_id=u.id and club_id='.$club);
         return $q->result_array();
     }
+    
+    public function getOrgId($user_id) {
+        $q = $this->db->query('select id from organizers where user_id='.$user_id);
+        if ($res = $q->result_array()) {
+            return $res[0]['id'];
+        }
+        else {
+            return false;
+        }
+    }
 
     public function trainersHtml($club)
     {
@@ -438,7 +448,7 @@ class CabinetModel extends CI_Model{
     
     public function htmlCompetitions($role) 
     {
-        $q = $this->db->query('select c.name, c.id, ci.city,'
+        $q = $this->db->query('select c.name, c.id, ci.city, c.org_id,'
                 . ' c.date_reg_open, c.date_reg_close, c.date_open, c.date_close, s.status'
                 . ' from competitions c, statuses s, cities ci'
                 . ' where c.city_id=ci.id and c.status_id=s.id');
@@ -472,6 +482,12 @@ class CabinetModel extends CI_Model{
                     $html.=' <a href="../cabinet/clubeaddtocomp/'.$r->id.'" class="btn btn-success btn-sm comp" id="c'.$r->id.'">регистрация участников</a>';
                 }else{
                     $html.='регистрация закрыта';
+                }
+            }
+            if ($role=='organizer'){
+                $org = $this->getOrgId($this->session->id);
+                if ($org == $r->org_id){
+                    $html.=' <a href="../orgcompetition/'.$r->id.'" class="btn btn-default btn-sm comp" id="c'.$r->id.'">управление</a>';
                 }
             }
             
@@ -829,5 +845,19 @@ class CabinetModel extends CI_Model{
         }
         $res=['solo'=>$hs,'group'=>$hg];
         return $res;
+    }
+    
+    public function isOrgComp($comp_id, $user_id)
+    {
+        $q = $this->db->query('select id '
+                . ' from competitions'
+                . ' where id='.$comp_id.' '
+                . ' and org_id=(select id from organizers where user_id='.$user_id.')');
+        $res= $q->result();
+        if (count($res)>0){
+            return true;
+        }else {
+            return false;
+        }
     }
 }

@@ -87,7 +87,17 @@ class Cabinet extends CI_Controller
         else {
             $org = $this->CabinetModel->is_organizer($this->session->id);
             if ($org) {
-                $this->load->view('organizer/index');
+            $statuses = $this->CabinetModel->selectStatuses();
+            $regions = $this->CabinetModel->regions_html();
+            $ways=$this->CabinetModel->selectWays();
+            $competitions=$this->CabinetModel->htmlCompetitions('organizer');
+            $data=array(
+                'regions'=>$regions,
+                'ways'=>$ways,
+                'competitions'=>$competitions,
+                'statuses'=>$statuses,
+            );
+                $this->load->view('organizer/competitions',$data);
             }
             else {
                 $regions = $this->CabinetModel->regions_html();
@@ -380,6 +390,21 @@ class Cabinet extends CI_Controller
         }
         
     }
+    
+    public function orgcompetition($comp_id){
+        $val = $this->CabinetModel->isOrgComp($comp_id, $this->session->id);
+        if (!$val){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $comp_list=$this->AjaxModel->getCompListHtml($comp_id, 'organizer');
+            $data=[
+                'comp_id'=>$comp_id,
+                'comp_list'=>$comp_list
+                    ];
+            $this->load->view('organizer/competition',$data);
+        }
+    }
 
     public function test()
     {
@@ -392,4 +417,5 @@ class Cabinet extends CI_Controller
     if ($tall>0) $pages+=1;
     echo 'pages= '.$pages.'<br>';*/
     }
+    
 }
