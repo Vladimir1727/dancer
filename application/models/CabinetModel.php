@@ -466,7 +466,13 @@ class CabinetModel extends CI_Model{
                 }else{
                     $html.='регистрация закрыта';
                 }
-                
+            }
+            if ($role=="cluber"){
+                if (strtotime($r->date_reg_open)<time() && strtotime($r->date_reg_close)>time() && $r->status=='ON'){
+                    $html.=' <a href="../cabinet/clubeaddtocomp/'.$r->id.'" class="btn btn-success btn-sm comp" id="c'.$r->id.'">регистрация участников</a>';
+                }else{
+                    $html.='регистрация закрыта';
+                }
             }
             
             $html .= '</td></tr>';
@@ -491,6 +497,12 @@ class CabinetModel extends CI_Model{
             $select='select u.last_name, u.first_name, d.birthdate, d.id'
                     . ' from users u, dancers d'
                     . ' where d.user_id=u.id and trainer_id=(select id from trainers where user_id='.$this->session->id.')';
+        }
+        if ($role == 'cluber'){
+            $select='select u.last_name, u.first_name, d.birthdate, d.id'
+                    . ' from users u, dancers d, trainers t'
+                    . ' where d.user_id=u.id and d.trainer_id=t.id and'
+                    . ' club_id=(select id from clubers where user_id='.$this->session->id.')';
         }
         $q = $this->db->query($select);
         $row = $q->result_array();

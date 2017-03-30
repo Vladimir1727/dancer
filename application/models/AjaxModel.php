@@ -308,6 +308,16 @@ class AjaxModel extends CI_Model{
         }
     }
     
+    public function getClubId($user_id) {
+        $q = $this->db->query('select id from clubers where user_id='.$user_id);
+        if ($res = $q->result_array()) {
+            return $res[0]['id'];
+        }
+        else {
+            return false;
+        }
+    }
+    
     public function deactivateTrainer($id)
     {
         $this->db->query('update users'
@@ -517,6 +527,20 @@ class AjaxModel extends CI_Model{
                         . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
                         . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
                         . ' and d.bell_id=b.id and cl.comp_id='.$comp_id.' '
+                        . ' order by cl.part asc');
+                $res = $q->result_array();
+                break;
+            case 'cluber':
+                $q = $this->db->query('select u.first_name, u.last_name,'
+                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
+                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
+                        . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
+                        . ' comp_list cl, bellydance b, pays p, trainers t'
+                        . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
+                        . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
+                        . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
+                        . ' and cl.comp_id='.$comp_id.' and t.club_id='.$role_id.''
+                        . ' and d.bell_id=b.id and d.trainer_id=t.id'
                         . ' order by cl.part asc');
                 $res = $q->result_array();
                 break;
@@ -775,7 +799,7 @@ class AjaxModel extends CI_Model{
                 . ' from competitions c, statuses s'
                 . ' where c.status_id=s.id and c.id='.$comp_id);
         $res = $q->result();
-        //if ($res[0]->status == 'DONE') return 'NO';
+        if ($res[0]->status == 'DONE') return 'NO';
         $this->db->query('update competitions'
                 . ' set status_id=(select id from statuses where status="DONE")'
                 . ' where id='.$comp_id);
@@ -857,5 +881,57 @@ class AjaxModel extends CI_Model{
             }
         }
         return $mess;
+    }
+    
+    public function getYearPay($type)
+    {
+        switch ($type){
+            case "all":
+                $sel='select u.last_name, u.first_name, u.father_name, d.id,'
+                    . ' u.phone, u.email, c.title, d.pay'
+                    . ' from users u, dancers d, trainers t, clubers c'
+                    . ' where d.user_id=u.id and d.trainer_id=t.id and t.club_id=c.id';
+                break;
+            case "yes":
+                $now=date('Y',time());
+                $sel='select u.last_name, u.first_name, u.father_name, d.id, '
+                    . ' u.phone, u.email, c.title, d.pay'
+                    . ' from users u, dancers d, trainers t, clubers c'
+                    . ' where d.user_id=u.id and d.trainer_id=t.id and t.club_id=c.id'
+                    . ' and d.pay>='.$now;
+                break;
+            case "no":
+                $now=date('Y',time());
+                $sel='select u.last_name, u.first_name, u.father_name,'
+                    . ' u.phone, u.email, c.title, d.pay, d.id'
+                    . ' from users u, dancers d, trainers t, clubers c'
+                    . ' where d.user_id=u.id and d.trainer_id=t.id and t.club_id=c.id'
+                    . ' and (ISNULL(d.pay) or d.pay<'.$now.')';
+                break;
+        }
+        $q = $this->db->query($sel);
+        $res = $q->result_array();
+        $html='';
+        foreach ($res as $r){
+            if ($r['pay']==null) $r['pay']=0;
+            $html.='<tr>';
+            $html.='<td><input type="hidden" name="id[]" value='.$r['id'].'>';
+            $html.=$r['last_name'].' '.$r['first_name'].' '.$r['father_name'].'</td>';
+            $html.='<td>'.$r['email'].' '.$r['phone'].'</td>';
+            $html.='<td>'.$r['title'].'</td>';
+            $html.='<td><input type="number" name="year[]" value='.$r['pay'].' class="col-xs-5"></td>';
+            $html.='</tr>';
+        }
+        return $html;
+    }
+    
+    public function saveYearPays($data)
+    {
+        for ($i=0;$i<count($data['id']);$i++){
+            $ins=['pay'=>$data['year'][$i]];
+            $this->db->where('id',$data['id'][$i]);
+            $this->db->update('dancers',$ins);
+        }
+        return true;
     }
 }

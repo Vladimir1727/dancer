@@ -23,4 +23,7 @@
     <a href="<?php echo base_url();?>index.php/cabinet/admincompetitions" class="btn btn-default">
         Конкурсы
     </a>
+    <a href="<?php echo base_url();?>index.php/cabinet/yearpay" class="btn btn-default">
+        Ежегодная оплата
+    </a>
 </div>

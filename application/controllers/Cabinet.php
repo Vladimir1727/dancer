@@ -336,6 +336,50 @@ class Cabinet extends CI_Controller
         $file=$this->AjaxModel->getResultCsv($comp_id, 'admin');
         $this->load->view('admin/upload',['comp_id'=>$comp_id,'file'=>$file]);
     }
+    
+    public function clubcompetitions(){
+        if ($this->session->cluber != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $competitions=$this->CabinetModel->htmlCompetitions('cluber');
+            $data=array(
+                'competitions'=>$competitions
+            );
+            $this->load->view('cluber/competitions',$data);
+        }
+    }
+    
+    public function clubeaddtocomp($comp_id)
+    {
+        if ($this->session->cluber != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $club_id = $this->AjaxModel->getClubId($this->session->id);
+            $comp_list=$this->AjaxModel->getCompListHtml($comp_id, 'cluber', $club_id);
+            $dancers = $this->CabinetModel->allDancersToComp('cluber');
+            $data=array(
+                'dancers'=>$dancers,
+                'comp_id'=>$comp_id,
+                'comp_list'=>$comp_list
+            );
+            $this->load->view('trainer/adddancerstocomp',$data);
+        }
+    }
+    
+    public function yearpay()
+    {
+        $list = $this->AjaxModel->getYearPay('all');
+        if ($this->session->admin != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $list = $this->AjaxModel->getYearPay('all');
+            $this->load->view('admin/yearpay',['list'=>$list]);
+        }
+        
+    }
 
     public function test()
     {

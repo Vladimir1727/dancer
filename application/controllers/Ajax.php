@@ -347,7 +347,11 @@ class Ajax extends CI_Controller {
         echo $res;
     }
 
-
+    public function getYearPay()
+    {
+        echo $this->AjaxModel->getYearPay($_POST['type']);
+    }
+    
     public function test()
     {
         echo "TEST <br>";
@@ -356,5 +360,11 @@ class Ajax extends CI_Controller {
         
         var_dump($res);
         
+    }
+    
+    public function saveYearPays()
+    {
+        $res=$this->AjaxModel->saveYearPays($_POST);
+        var_dump($res);
     }
 }
