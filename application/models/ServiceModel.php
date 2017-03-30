@@ -219,7 +219,8 @@ class ServiceModel extends CI_Model{
                         . 'lig_id int,'
                         . 'foreign key (lig_id) references ligs(id),'
                         . 'points int,'
-                         . 'way_id int,'
+                        . 'way_id int,'
+                        . 'create_at date,'
                         . 'foreign key (way_id) references ways(id) on update cascade'
                         . ')default charset=utf8';
                 $this->db->query($exp);

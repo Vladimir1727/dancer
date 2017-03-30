@@ -428,6 +428,7 @@ class AjaxModel extends CI_Model{
     
     public function saveExp($data)
     {
+        $data['create_at'] = date('Y-m-d',time());
         return $this->db->insert('experience', $data);
     }
     
@@ -799,7 +800,7 @@ class AjaxModel extends CI_Model{
                 . ' from competitions c, statuses s'
                 . ' where c.status_id=s.id and c.id='.$comp_id);
         $res = $q->result();
-        if ($res[0]->status == 'DONE') return 'NO';
+        //if ($res[0]->status == 'DONE') return 'NO';
         $this->db->query('update competitions'
                 . ' set status_id=(select id from statuses where status="DONE")'
                 . ' where id='.$comp_id);
@@ -848,36 +849,56 @@ class AjaxModel extends CI_Model{
             if ($c['point']==0){
                 continue;
             }
-            $q = $this->db->query('select e.id, e.points, l.points as next_p, l.number'
+            $q = $this->db->query('select e.id, e.points, l.points as next_p, l.number, e.create_at, l.days'
                     . ' from experience as e, ligs as l, dancers d '
                     . ' where e.dancer_id='.$c['dancer_id']
                     . ' and e.way_id='.$way_id.' and e.lig_id=l.id and e.dancer_id=d.id');
             $res = $q->result();
             if (count($res)==0){
-                $ins=$this->db->query('insert into experience (dancer_id, lig_id, points, way_id)'
+                $time=date('Y-m-d',time());
+                $ins=$this->db->query('insert into experience (dancer_id, lig_id, points, way_id, create_at)'
                         . ' values ('
                         . $c['dancer_id']
                         . ',(select id from ligs where way_id='.$way_id.' and name="Дебют")'
                         . ','.$c['point']
                         . ','.$way_id
-                        . ')');
-            } elseif (($res[0]->points+$c['point'])<$res[0]->next_p){
-                $this->db->where('id',$res[0]->id);
-                $sum=$res[0]->points+$c['point'];
-                $this->db->update('experience',['points'=>$sum]);
+                        . ',"'.$time
+                        . '")');
             } else{
-                $q= $this->db->query('select id '
-                        . ' from ligs'
-                        . ' where number='.($res[0]->number+1).' and way_id='.$way_id);
-                $r=$q->result();
-                $lig_id=$r[0]->id;
-                $sum=$res[0]->points+$c['point']-$res[0]->next_p;
-                $ins=[
-                    'lig_id' => $lig_id,
-                    'points' => $sum
-                ];
-                $this->db->where('id',$res[0]->id);
-                $this->db->update('experience',$ins);
+                $prev = strtotime($res[0]->create_at);
+                $del = $prev + $res[0]->days*24*60*60 - time();
+                if ($res[0]->days>0 && $del<0){
+                    $q= $this->db->query('select id '
+                            . ' from ligs'
+                            . ' where number='.($res[0]->number+1).' and way_id='.$way_id);
+                    $r=$q->result();
+                    $lig_id=$r[0]->id;
+                    $ins=[
+                        'lig_id' => $lig_id,
+                        'points' => $res[0]->points
+                    ];
+                    $this->db->where('id',$res[0]->id);
+                    $this->db->update('experience',$ins);
+                }else{
+                    $sum=$res[0]->points+$c['point'];
+                    if ($sum<$res[0]->next_p){
+                        $this->db->where('id',$res[0]->id);
+                        $this->db->update('experience',['points'=>$sum]);
+                    } else{
+                        $q= $this->db->query('select id '
+                                . ' from ligs'
+                                . ' where number='.($res[0]->number+1).' and way_id='.$way_id);
+                        $r=$q->result();
+                        $lig_id=$r[0]->id;
+                        $sum = $sum - $res[0]->next_p;
+                        $ins=[
+                            'lig_id' => $lig_id,
+                            'points' => $sum
+                        ];
+                        $this->db->where('id',$res[0]->id);
+                        $this->db->update('experience',$ins);
+                    }
+                }
             }
         }
         return $mess;

@@ -32,7 +32,6 @@ $('#save_but').click(function(){
         type:'POST',
         data:$('#pay_form').serialize(),
         success: function(data){
-            console.log(data);
             show('all');
         }
     });

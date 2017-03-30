@@ -355,10 +355,10 @@ class Ajax extends CI_Controller {
     public function test()
     {
         echo "TEST <br>";
-        $file="list1.csv";
-        $res=$this->AjaxModel->uploadResult($file,3);
-        
-        var_dump($res);
+        //$file="list1.csv";
+        //$res=$this->AjaxModel->uploadResult($file,3);
+        //var_dump($res);
+        echo date('Y-m-d',time());
         
     }
     
