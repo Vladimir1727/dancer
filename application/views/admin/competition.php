@@ -38,6 +38,8 @@
 <button class="btn btn-info" id="reward_but" data-toggle="modal" data-target="#rewardmodal">Для награждения</button>
 <a class="btn btn-info" href="../numbers/<?php echo $comp_id; ?>" target="_blank">Номера участников</a>
 <a class="btn btn-warning" href="../uploadResults/<?php echo $comp_id; ?>" target="_blank">Распределить места</a>
+<button class="btn btn-danger" id="done_but">Завершить конкурс</button>
+<p id="mess"></p>
 <div class="row">
     <div class="col-md-4">
         <table class="table table-striped" id="main_table">

@@ -768,4 +768,94 @@ class AjaxModel extends CI_Model{
         }
         return $html;
     }
+    
+    public function doneComp($comp_id)
+    {
+        $q = $this->db->query('select s.status'
+                . ' from competitions c, statuses s'
+                . ' where c.status_id=s.id and c.id='.$comp_id);
+        $res = $q->result();
+        //if ($res[0]->status == 'DONE') return 'NO';
+        $this->db->query('update competitions'
+                . ' set status_id=(select id from statuses where status="DONE")'
+                . ' where id='.$comp_id);
+        $q = $this->db->query('select id, part, place'
+                . ' from comp_list'
+                . ' where comp_id='.$comp_id);
+        $dancers = $q->result_array();
+        $q = $this->db->query('SELECT part, count(part) as num FROM comp_list
+                                where comp_id='.$comp_id.'
+                                group by part');
+        $parts = $q->result_array();
+        $q = $this->db->query('SELECT minn, maxn, reight, points FROM reight');
+        $reight = $q->result_array();
+        $lost = FALSE;
+        $mess='OK';
+        foreach ($dancers as $d){
+            foreach ($parts as $p){
+                if ($p['part']==$d['part']){
+                    $num=$p['num'];
+                }
+            }
+            $lost_one = TRUE;
+            foreach ($reight as $r){
+                if ($d['place']==$r['reight'] && $num>=$r['minn'] && $num<=$r['maxn']){
+                    $lost_one=FALSE;
+                    $points=$r['points']+1;
+                    $this->db->where('id',$d['id']);
+                    $this->db->update('comp_list',['points'=>$points]);
+                }
+            }
+            if ($lost_one) {
+                $lost = TRUE;
+            }
+        }
+        if ($lost){
+            $mess='ERROR';
+        }
+        $q = $this->db->query('select way_id from competitions where id='.$comp_id);
+        $res= $q->result();
+        $way_id= $res[0]->way_id;
+        $q = $this->db->query('select dancer_id, sum(points) as point'
+                . ' from comp_list where comp_id='.$comp_id
+                . ' group by dancer_id');
+        $comp_points = $q->result_array();
+        foreach($comp_points as $c){
+            if ($c['point']==0){
+                continue;
+            }
+            $q = $this->db->query('select e.id, e.points, l.points as next_p, l.number'
+                    . ' from experience as e, ligs as l, dancers d '
+                    . ' where e.dancer_id='.$c['dancer_id']
+                    . ' and e.way_id='.$way_id.' and e.lig_id=l.id and e.dancer_id=d.id');
+            $res = $q->result();
+            if (count($res)==0){
+                $ins=$this->db->query('insert into experience (dancer_id, lig_id, points, way_id)'
+                        . ' values ('
+                        . $c['dancer_id']
+                        . ',(select id from ligs where way_id='.$way_id.' and name="Дебют")'
+                        . ','.$c['point']
+                        . ','.$way_id
+                        . ')');
+            } elseif (($res[0]->points+$c['point'])<$res[0]->next_p){
+                $this->db->where('id',$res[0]->id);
+                $sum=$res[0]->points+$c['point'];
+                $this->db->update('experience',['points'=>$sum]);
+            } else{
+                $q= $this->db->query('select id '
+                        . ' from ligs'
+                        . ' where number='.($res[0]->number+1).' and way_id='.$way_id);
+                $r=$q->result();
+                $lig_id=$r[0]->id;
+                $sum=$res[0]->points+$c['point']-$res[0]->next_p;
+                $ins=[
+                    'lig_id' => $lig_id,
+                    'points' => $sum
+                ];
+                $this->db->where('id',$res[0]->id);
+                $this->db->update('experience',$ins);
+            }
+        }
+        return $mess;
+    }
 }

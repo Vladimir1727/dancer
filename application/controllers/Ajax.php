@@ -340,13 +340,21 @@ class Ajax extends CI_Controller {
         echo $data;
     }
     
+    public function doneComp()
+    {
+        $comp_id = $_POST['comp_id'];
+        $res = $this->AjaxModel->doneComp($comp_id);
+        echo $res;
+    }
+
+
     public function test()
     {
         echo "TEST <br>";
         $file="list1.csv";
         $res=$this->AjaxModel->uploadResult($file,3);
-        echo "<pre>";
+        
         var_dump($res);
-        echo "</pre>";
+        
     }
 }
