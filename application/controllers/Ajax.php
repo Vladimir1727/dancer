@@ -311,6 +311,7 @@ class Ajax extends CI_Controller {
     public function getCompReward()
     {
         echo $this->AjaxModel->getCompReward($_POST['comp_id']);
+        
     }
     
     public function setNumbers()
@@ -337,6 +338,14 @@ class Ajax extends CI_Controller {
     {
         $comp_id=$_POST['comp_id'];
         $data=$this->AjaxModel->getResultCsv($comp_id, 'admin');
+        echo $data;
+    }
+    
+    public function getResultHtml()
+    {
+        $comp_id=$_POST['comp_id'];
+        //$data=$comp_id;
+        $data=$this->AjaxModel->getResultHtml($comp_id, 'admin');
         echo $data;
     }
     

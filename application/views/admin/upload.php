@@ -29,5 +29,26 @@ include_once 'menu.php';?>
     </thead>
 </table>
 
+<table class="table table-striped table-condensed" id="list">
+    <caption>общий перечень</caption>
+    <tbody>
+        <?php echo $list;?>
+    </tbody>
+    <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Город</th>
+            <th>Клуб</th>
+            <th>Тренер</th>
+            <th>Год рождения</th>
+            <th>Возраст</th>
+            <th>Танец</th>
+            <th>Кат.кол.</th>
+            <th>Лига</th>
+            <th>Место</th>
+        </tr>
+    </thead>
+</table>
+
 <script src="<?php echo base_url(); ?>/js/admin/upload.js"></script>
 <?php $this->load->view('footer'); ?>

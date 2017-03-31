@@ -29,6 +29,7 @@ $('#reward_but').click(function(){
         type:'POST',
         data:'comp_id='+$('#comp_id').val(),
         success: function(data){
+            console.log(data);
             $('#reward_table tbody').html(data);
         }
     });

@@ -485,6 +485,34 @@ class AjaxModel extends CI_Model{
         return true;
     }
     
+    public function AdminCompList($comp_id)
+    {
+        $rows = $this->getCompList($comp_id, 'admin');
+        $html='';
+        foreach ($rows as $row){
+            $html.='<tr>';
+            $html.='<td>'.$row['part'].'</td>';
+            $html.='<td>'.$row['last_name'].' '.$row['first_name'].'</td>';
+            $html.='<td>'.substr($row['birthdate'],0,4).'</td>';
+            if ($row['danlig']==null){
+                $row['danlig']='Дебют';
+            }
+            $html.='<td>'.$row['danlig'].'</td>';
+            $html.='<td>'.$row['points'].'</td>';
+            $html.='<td>'.$row['style'].'</td>';
+            $html.='<td>'.$row['age_cat'].'</td>';
+            $html.='<td>'.$row['count_cat'].'</td>';
+            $html.='<td>'.$row['lig'].'</td>';
+            $html.='<td>'.$row['bell'].'</td>';
+            if ($row['type']==1) $html.='<td>'.$row['pay_iude'].'</td>';
+            if ($row['type']==2) $html.='<td>'.$row['pay_other'].'</td>';
+            if ($row['type']==3) $html.='<td>'.$row['pay_not'].'</td>';
+            $html.='</tr>';
+        }
+        return $html;
+    }
+    
+    
     public function getCompListHtml($comp_id, $role, $role_id = 0)
     {
         $rows = $this->getCompList($comp_id, $role, $role_id);
@@ -501,7 +529,7 @@ class AjaxModel extends CI_Model{
         return $html;
     }
     
-    public function getCompList($comp_id, $role, $role_id)
+    public function getCompList($comp_id, $role, $role_id=0)
     {
         switch ($role){
             case 'trainer':
@@ -519,8 +547,10 @@ class AjaxModel extends CI_Model{
                 $res = $q->result_array();
                 break;
             case 'admin':
-                $q = $this->db->query('select u.first_name, u.last_name,'
-                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
+                $q = $this->db->query('select u.first_name, u.last_name, cl.part, cl.points,'
+                        . ' (select name from ligs where id=(select experience.lig_id from experience where experience.dancer_id=d.id '
+                        . ' and experience.way_id=(select way_id from competitions where id='.$comp_id.'))) as danlig,'
+                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not, d.birthdate,b.name as bell,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
                         . ' comp_list cl, bellydance b, pays p'
@@ -546,7 +576,7 @@ class AjaxModel extends CI_Model{
                 $res = $q->result_array();
                 break;
             case 'organizer':
-                $q = $this->db->query('select u.first_name, u.last_name,'
+                $q = $this->db->query('select u.first_name, u.last_name, d.birthdate,'
                         . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
@@ -624,6 +654,29 @@ class AjaxModel extends CI_Model{
                 break;
         }
         return $res;
+    }
+    
+    public function getResultHtml($comp_id, $role, $role_id = 0)
+    {
+        $rows = $this->getCompResult($comp_id, $role, $role_id);
+        $html='';
+        foreach ($rows as $row){
+            $html.='<tr>';
+            $html.='<td>'.$row['last_name'].' '.$row['first_name'].'</td>';
+            $html.='<td>'.$row['city'].'</td>';
+            $html.='<td>'.$row['title'].'</td>';
+            $html.='<td>'.$row['tr_last_name'].' '.$row['tr_first_name'].'</td>';
+            $html.='<td>'.substr($row['birthdate'],0,4).'</td>';
+            $ytime =time() - strtotime($row['birthdate']);
+            $year = ($ytime - $ytime % 31556926) / 31556926;
+            $html.='<td>'.$year.'</td>';
+            $html.='<td>'.$row['style'].'</td>';
+            $html.='<td>'.$row['count'].'</td>';
+            $html.='<td>'.$row['lig'].'</td>';
+            $html.='<td>'.$row['place'].'</td>';
+            $html.='</tr>';
+        }
+        return $html;
     }
     
     public function savePays($data)

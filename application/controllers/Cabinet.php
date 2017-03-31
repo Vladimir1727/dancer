@@ -323,12 +323,10 @@ class Cabinet extends CI_Controller
             $this->load->view('errors/error_access');
         }
         else {
-            $comp_list=$this->AjaxModel->getCompListHtml($id, 'admin');
-            $pay_list=$this->CabinetModel->getPayListHtml($id);
+            $comp_list=$this->AjaxModel->AdminCompList($id, 'admin');
             $data=array(
                 'comp_id'=>$id,
                 'comp_list'=>$comp_list,
-                'pay_list'=>$pay_list
             );
             $this->load->view('admin/competition',$data);
         }
@@ -343,8 +341,14 @@ class Cabinet extends CI_Controller
     
     public function uploadResults($comp_id)
     {
+        if ($this->session->admin != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
         $file=$this->AjaxModel->getResultCsv($comp_id, 'admin');
-        $this->load->view('admin/upload',['comp_id'=>$comp_id,'file'=>$file]);
+        $list=$this->AjaxModel->getResultHtml($comp_id, 'admin');
+        $this->load->view('admin/upload',['comp_id'=>$comp_id,'file'=>$file,'list'=>$list]);
+        }
     }
     
     public function clubcompetitions(){
@@ -404,6 +408,29 @@ class Cabinet extends CI_Controller
                     ];
             $this->load->view('organizer/competition',$data);
         }
+    }
+    
+    public function comppays($comp_id)
+    {
+        if ($this->session->admin != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $comp_list=$this->AjaxModel->getCompListHtml($comp_id, 'admin');
+            $pay_list=$this->CabinetModel->getPayListHtml($comp_id);
+            $data=array(
+                'comp_id'=>$comp_id,
+                'comp_list'=>$comp_list,
+                'pay_list'=>$pay_list
+            );
+            $this->load->view('admin/comppays',$data);
+        }
+    }
+    
+    public function compcontacts($comp_id)
+    {
+        $cont= $this->CabinetModel->getCompContacts($comp_id);
+        $this->load->view('admin/contacts',$cont);
     }
 
     public function test()

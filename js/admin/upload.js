@@ -28,8 +28,20 @@ $('#file').on('change',function(){
                 $('#main_table').show();
                 $('#main_table tbody').html(data);
             }
+            show();
         }
     });
 });
+
+function show(){
+    $.ajax({
+        url:'../../ajax/getResultHtml',
+        type:'POST',
+        data:'comp_id='+$('#comp_id').val(),
+        success: function(data){
+            $('#list').html(data);
+        }
+    });
+}
 
 })})(jQuery)

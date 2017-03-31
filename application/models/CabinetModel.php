@@ -879,4 +879,45 @@ class CabinetModel extends CI_Model{
             return false;
         }
     }
+    
+    public function getCompContacts($comp_id)
+    {
+        $q= $this->db->query('select DISTINCT u.first_name, u.last_name, u.father_name,'
+                . ' cl.title, ci.city, u.phone, u.email, ci.city'
+                . ' from users u, cities ci, clubers cl, comp_list l, dancers d, trainers t'
+                . ' where l.dancer_id=d.id and d.trainer_id=t.id and t.club_id=cl.id'
+                . ' and cl.city_id=ci.id and cl.user_id=u.id and l.comp_id='.$comp_id);
+        $res=$q->result_array();
+        $c='';
+        foreach ($res as $r){
+            $c.='<tr>';
+            $c.='<td>'.$r['last_name'].' '.$r['first_name'].' '.$r['father_name'].'</td>';
+            $c.='<td>'.$r['title'].'</td>';
+            $c.='<td>'.$r['city'].'</td>';
+            $c.='<td>'.$r['phone'].'</td>';
+            $c.='<td>'.$r['email'].'</td>';
+            $c.='</tr>';
+        }
+        $q= $this->db->query('select DISTINCT u.first_name, u.last_name, u.father_name,'
+                . ' cl.title, ci.city, u.phone, u.email, ci.city'
+                . ' from users u, cities ci, clubers cl, comp_list l, dancers d, trainers t'
+                . ' where l.dancer_id=d.id and d.trainer_id=t.id and t.club_id=cl.id'
+                . ' and cl.city_id=ci.id and t.user_id=u.id and l.comp_id='.$comp_id);
+        $res=$q->result_array();
+        $t='';
+        foreach ($res as $r){
+            $t.='<tr>';
+            $t.='<td>'.$r['last_name'].' '.$r['first_name'].' '.$r['father_name'].'</td>';
+            $t.='<td>'.$r['title'].'</td>';
+            $t.='<td>'.$r['city'].'</td>';
+            $t.='<td>'.$r['phone'].'</td>';
+            $t.='<td>'.$r['email'].'</td>';
+            $t.='</tr>';
+        }
+        $cont=[
+            'clubers'=>$c,
+            'trainers'=>$t
+        ];
+        return $cont;
+    }
 }
