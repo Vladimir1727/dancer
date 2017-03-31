@@ -575,8 +575,27 @@ class CabinetModel extends CI_Model{
         $count_cat = $q->result_array();
         //получаем список лиг
         if ($d_count > 1){
+            $q = $this->db->query('select l.id, l.name, l.number'
+                    . ' from ligs l, dancers d, experience e'
+                    . ' where l.deleted=0 and l.id in (select lig_id from experience'
+                    . ' where dancer_id in ('.implode(',', $dancers).'))'
+                    . ' and l.way_id=(select way_id from competitions where id='.$comp_id.')'
+                    . ' and e.lig_id=l.id and e.dancer_id=d.id');
+            $dan_lig= $q->result_array();
+            $dancers_count=count($dancers);
+            $deb=$dancers_count-count($dan_lig);
+            foreach ($dan_lig as $dl){
+                if ($dl['name']=="Дебют"){
+                    $deb++;
+                }
+            }
+            if ($deb/$dancers_count>0.1){
+                $lig_name="Дебют";
+            } else {
+                $lig_name="Открытая лига";
+            }
             $q = $this->db->query('select id, name from ligs'
-                    . ' where name in ("Дебют","Открытая лига")'
+                    . ' where name="'.$lig_name.'"'
                     . ' and way_id=(select way_id from competitions where id='.$comp_id.') and deleted=0');
             $ligs = $q->result_array();
         }
