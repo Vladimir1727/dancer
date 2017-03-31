@@ -138,6 +138,12 @@ class Ajax extends CI_Controller {
         echo $this->AjaxModel->htmlStyles($_POST['way']);
     }
     
+    public function selectStyles()
+    {
+        //echo $_POST['way'];
+        echo $this->AjaxModel->selectStyles($_POST['way']);
+    }
+    
     public function showCounts()
     {
         echo $this->CabinetModel->HtmlCounts();
@@ -375,5 +381,11 @@ class Ajax extends CI_Controller {
     {
         $res=$this->AjaxModel->saveYearPays($_POST);
         var_dump($res);
+    }
+    
+    public function showStat(){
+        $style_id = $_POST['style'];
+        $res=$this->AjaxModel->showStat($style_id);
+        echo $res;
     }
 }

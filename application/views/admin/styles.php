@@ -68,4 +68,4 @@
     </div>
 </div>
 <?php $this->load->view('footer'); ?>
-<script src="<?php echo base_url(); ?>/js/admin_styles.js"></script>
+<script src="<?php echo base_url(); ?>/js/admin/styles.js"></script>

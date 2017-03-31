@@ -167,6 +167,15 @@ class AjaxModel extends CI_Model{
         return $html;
     }
     
+    public function selectStyles($way_id){
+        $data=$this->getStyles($way_id);
+        $html='<option value="0">выберите стиль</option>';
+        foreach ($data as $d) {
+            $html.='<option value="'.$d['id'].'">'.$d['style'].'</option>';
+        }
+        return $html;
+    }
+    
     public function getLigs($way)
     {
         $q=$this->db->query('select * from ligs where deleted=0 and way_id='.$way);
@@ -1020,5 +1029,39 @@ class AjaxModel extends CI_Model{
             $this->db->update('dancers',$ins);
         }
         return true;
+    }
+    
+    public function showStat($style_id)
+    {
+        $year=date('Y',time());
+        $q = $this->db->query('select u.first_name, u.last_name, u.father_name, ci.city, cu.title,'
+                . ' d.birthdate, s.style,'
+                . ' (select sum(points) from comp_list where dancer_id=d.id) as sum_p,'
+                . ' (select last_name from users where id=t.id) as t_last_name,'
+                . ' (select first_name from users where id=t.id) as t_first_name,'
+                . ' (select father_name from users where id=t.id) as t_father_name'
+                . ' from users as u, dancers as d, trainers as t, clubers as cu, styles s,'
+                . ' comp_list as cl, competitions as co, cities as ci'
+                . ' where co.date_close>'.$year.''
+                . ' and cl.comp_id=co.id and d.user_id=u.id and d.trainer_id=t.id'
+                . ' and t.club_id=cu.id and cu.city_id=ci.id and s.id=cl.style_id'
+                . ' and cl.style_id='.$style_id
+                . ' group by d.id'
+                . ' order by sum_p desc');
+        $res = $q->result_array();
+        
+        $html='';
+        foreach ($res as $r){
+            $html.='<tr>';
+            $html.='<td>'.$r['last_name'].' '.$r['first_name'].' '.$r['father_name'].'</td>';
+            $html.='<td>'.$r['city'].'</td>';
+            $html.='<td>'.$r['title'].'</td>';
+            $html.='<td>'.$r['t_last_name'].' '.$r['t_first_name'].' '.$r['t_father_name'].'</td>';
+            $html.='<td>'.substr($r['birthdate'],0,4).'</td>';
+            $html.='<td>'.$r['style'].'</td>';
+            $html.='<td>'.$r['sum_p'].'</td>';
+            $html.='</tr>';
+        }
+        return $html;
     }
 }

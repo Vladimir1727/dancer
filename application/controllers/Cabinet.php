@@ -445,4 +445,13 @@ class Cabinet extends CI_Controller
     echo 'pages= '.$pages.'<br>';*/
     }
     
+    public function statistic() {
+        if ($this->session->admin != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $ways=$this->CabinetModel->selectWays();
+            $this->load->view('admin/statistic',['ways' => $ways]);
+        }
+    }
 }

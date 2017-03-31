@@ -26,4 +26,7 @@
     <a href="<?php echo base_url();?>index.php/cabinet/yearpay" class="btn btn-default">
         Ежегодная оплата
     </a>
+    <a href="<?php echo base_url();?>index.php/cabinet/statistic" class="btn btn-default">
+        Статистика
+    </a>
 </div>
