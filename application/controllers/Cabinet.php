@@ -401,7 +401,7 @@ class Cabinet extends CI_Controller
             $this->load->view('errors/error_access');
         }
         else {
-            $comp_list=$this->AjaxModel->getCompListHtml($comp_id, 'organizer');
+            $comp_list=$this->AjaxModel->AdminCompList($comp_id, 'admin');
             $data=[
                 'comp_id'=>$comp_id,
                 'comp_list'=>$comp_list

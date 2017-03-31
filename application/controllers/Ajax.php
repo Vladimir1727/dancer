@@ -361,6 +361,13 @@ class Ajax extends CI_Controller {
         $res = $this->AjaxModel->doneComp($comp_id);
         echo $res;
     }
+    
+    public function closeComp()
+    {
+        $comp_id = $_POST['comp_id'];
+        $res = $this->AjaxModel->closeComp($comp_id);
+        echo $res;
+    }
 
     public function getYearPay()
     {

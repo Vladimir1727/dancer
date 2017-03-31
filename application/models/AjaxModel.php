@@ -494,9 +494,9 @@ class AjaxModel extends CI_Model{
         return true;
     }
     
-    public function AdminCompList($comp_id)
+    public function AdminCompList($comp_id, $role)
     {
-        $rows = $this->getCompList($comp_id, 'admin');
+        $rows = $this->getCompList($comp_id, $role);
         $html='';
         foreach ($rows as $row){
             $html.='<tr>';
@@ -977,6 +977,14 @@ class AjaxModel extends CI_Model{
             }
         }
         return $mess;
+    }
+    
+    public function closeComp($comp_id)
+    {
+        $res = $this->db->query('update competitions set status_id='
+                . '(select id from statuses where status="CLOSE")'
+                . ' where id='.$comp_id);
+        return $res;
     }
     
     public function getYearPay($type)
