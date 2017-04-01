@@ -41,6 +41,7 @@
 <a class="btn btn-info" href="../comppays/<?php echo $comp_id; ?>" target="_blank">Оплата за конкурс</a>
 <a class="btn btn-warning" href="../uploadResults/<?php echo $comp_id; ?>" target="_blank">Распределить места</a>
 <a class="btn btn-default" href="../compcontacts/<?php echo $comp_id; ?>" target="_blank">Контакты</a>
+<a class="btn btn-success" href="../adddancers/<?php echo $comp_id; ?>" target="_blank">Добавить танцоров</a>
 <button class="btn btn-danger" id="done_but">Завершить конкурс</button>
 <p id="mess"></p>
 <div class="row">

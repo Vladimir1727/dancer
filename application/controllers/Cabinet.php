@@ -454,4 +454,37 @@ class Cabinet extends CI_Controller
             $this->load->view('admin/statistic',['ways' => $ways]);
         }
     }
+    
+    public function adddancers($comp_id){
+        if ($this->session->admin != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $clubes=$this->CabinetModel->selectAllClubes();
+            $data=[
+                'comp_id'=>$comp_id,
+                'clubes'=>$clubes
+            ];
+            //var_dump($clubes);
+            $this->load->view('admin/adddancers',$data);
+        }
+    }
+    
+    public function adminAddToComp(){
+        if ($this->session->admin != 2){
+            $this->load->view('errors/error_access');
+        }
+        else {
+            $trainer_id = $_POST['trainer_id'];
+            $comp_id = $_POST['comp_id'];
+            $comp_list=$this->AjaxModel->getCompListHtml($comp_id, 'trainer', $trainer_id);
+            $dancers = $this->CabinetModel->allDancersToComp('trainer');
+            $data=array(
+                'dancers'=>$dancers,
+                'comp_id'=>$comp_id,
+                'comp_list'=>$comp_list
+            );
+            $this->load->view('admin/adddancerstocomp',$data);
+        }
+    }
 }

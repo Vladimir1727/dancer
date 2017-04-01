@@ -920,4 +920,20 @@ class CabinetModel extends CI_Model{
         ];
         return $cont;
     }
+    
+    public function selectAllClubes()
+    {
+        $q = $this->db->query('select cl.id, cl.title, ci.city,'
+                . ' u.last_name, u.first_name, u.father_name'
+                . ' from clubers cl, cities ci, users u'
+                . ' where cl.city_id=ci.id and cl.user_id=u.id');
+        $row = $q->result_array();
+        $html='<option value="0"> Выберите клуб</option>';
+        foreach ($row as $r){
+            $html.='<option value='.$r['id'].'>'
+                    .$r['title'].' '.$r['last_name'].' '.$r['first_name'].' '.$r['father_name']
+                    .' '.$r['city'];
+        }
+        return $html;
+    }
 }

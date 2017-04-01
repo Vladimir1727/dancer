@@ -1072,4 +1072,36 @@ class AjaxModel extends CI_Model{
         }
         return $html;
     }
+    
+    public function selectTrainers($club_id)
+    {
+        $q = $this->db->query('select u.first_name, u.last_name, u.father_name, t.id'
+                . ' from trainers t, users u'
+                . ' where t.user_id=u.id and t.club_id='.$club_id);
+        $row = $q->result_array();
+        $html='<option value="0"> Выберите тренера</option>';
+        foreach ($row as $r){
+            $html.='<option value='.$r['id'].'>'.$r['last_name'].' '.$r['first_name'].' '.$r['father_name'];
+        }
+        return $html;
+    }
+    
+    public function selectDancers($trainer_id)
+    {
+
+        $q = $this->db->query('select u.first_name, u.last_name, u.father_name, d.id, d.birthdate'
+                . ' from users u, dancers d'
+                . ' where d.user_id=u.id and  d.trainer_id='.$trainer_id);
+        $row = $q->result_array();
+        $html='';
+        foreach ($row as $r){
+            $html.='<tr><td>'.$r['last_name'].' '.$r['first_name'].' '.$r['father_name'];
+            $ytime = time() - strtotime($r['birthdate']);
+            $year = ($ytime - $ytime % 31556926) / 31556926;
+            $html.='</td><td>'.$year;
+            //$html.='</td><td><input type="checkbox" name="dancers[]" value='.$r['id'].'>';
+            $html.='</td></tr>';
+        }
+        return $html;
+    }
 }

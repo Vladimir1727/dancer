@@ -395,4 +395,14 @@ class Ajax extends CI_Controller {
         $res=$this->AjaxModel->showStat($style_id);
         echo $res;
     }
+    
+    public function selectTrainers()
+    {
+        echo $this->AjaxModel->selectTrainers($_POST['id']);
+    }
+    
+    public function selectDancers()
+    {
+        echo $this->AjaxModel->selectDancers($_POST['id']);
+    }
 }
