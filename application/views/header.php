@@ -20,7 +20,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/main">
+      <a class="navbar-brand" href="http://dancer.ambientlounge.com.ua">
 		<img src="/img/logo.png" alt="logo">
       </a>
 

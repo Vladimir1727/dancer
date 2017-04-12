@@ -542,7 +542,7 @@ class AjaxModel extends CI_Model{
     {
         switch ($role){
             case 'trainer':
-                $q = $this->db->query('select u.first_name, u.last_name,'
+                $q = $this->db->query('select DISTINCT u.first_name, u.last_name,'
                         . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
@@ -556,7 +556,7 @@ class AjaxModel extends CI_Model{
                 $res = $q->result_array();
                 break;
             case 'admin':
-                $q = $this->db->query('select u.first_name, u.last_name, cl.part, cl.points,'
+                $q = $this->db->query('select DISTINCT u.first_name, u.last_name, cl.part, cl.points,'
                         . ' (select name from ligs where id=(select experience.lig_id from experience where experience.dancer_id=d.id '
                         . ' and experience.way_id=(select way_id from competitions where id='.$comp_id.'))) as danlig,'
                         . ' b.type, p.pay_iude, p.pay_other, p.pay_not, d.birthdate,b.name as bell,'
@@ -571,7 +571,7 @@ class AjaxModel extends CI_Model{
                 $res = $q->result_array();
                 break;
             case 'cluber':
-                $q = $this->db->query('select u.first_name, u.last_name,'
+                $q = $this->db->query('select DISTINCT u.first_name, u.last_name,'
                         . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
@@ -585,7 +585,7 @@ class AjaxModel extends CI_Model{
                 $res = $q->result_array();
                 break;
             case 'organizer':
-                $q = $this->db->query('select u.first_name, u.last_name, d.birthdate,'
+                $q = $this->db->query('select DISTINCT u.first_name, u.last_name, d.birthdate,'
                         . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
@@ -1104,4 +1104,5 @@ class AjaxModel extends CI_Model{
         }
         return $html;
     }
+    
 }

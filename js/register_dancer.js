@@ -2,6 +2,7 @@
 $('#cities').hide();
 $('#clubes').hide();
 $('#trainers').hide();
+$('#add').hide();
 
 $('#region').change(function(){
 	$('#cities').show();
@@ -41,6 +42,11 @@ function club(data){
 			success: function(trainers){
 				$('#trainer').html(trainers);
 				$('#trainers').show();
+                                $('#trainer').change(function(){
+                                   if ($('#trainer').val()>0){
+                                       $('#add').show();
+                                   }
+                                });
 			}
 		})
 	});

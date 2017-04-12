@@ -352,6 +352,7 @@ class CabinetModel extends CI_Model{
                 . ' from users u, dancers d'
                 . ' where u.id=d.user_id and d.user_id='.$this->session->id);
         $d=$q->result_array();
+        //return $this->session->id;
         $data=array(
             'trainer_name'=>$t[0]['last_name'].' '.$t[0]['first_name'].' '.$t[0]['father_name'],
             'trainer_email'=>$t[0]['email'],
@@ -935,5 +936,15 @@ class CabinetModel extends CI_Model{
                     .' '.$r['city'];
         }
         return $html;
+    }
+    
+    public function mainCompList()
+    {
+        $q = $this->db->query('select co.date_open, co.date_close, co.name, co.comment,'
+                . ' ci.city, u.first_name, u.last_name'
+                . ' from competitions co, cities ci, organizers o, users u'
+                . ' where co.city_id=ci.id and co.org_id=o.id and date_open>now() and o.user_id=u.id');
+        $data = $q->result_array();
+        return $data;
     }
 }

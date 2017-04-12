@@ -16,7 +16,8 @@ class Cabinet extends CI_Controller
 
     public function index()
     {
-        $this->load->view('main');
+        $comp_list = $this->CabinetModel->mainCompList();
+        $this->load->view('main',['list'=>$comp_list]);
     }
 
     public function user()
@@ -35,6 +36,7 @@ class Cabinet extends CI_Controller
             $dancer = $this->CabinetModel->is_dancer($this->session->id);
             if ($dancer) {
                 $contact=$this->CabinetModel->dancerContact();
+                //var_dump($contact);
                 $this->load->view('dancer/index',['contact'=>$contact]);
             }
             else {
@@ -484,7 +486,7 @@ class Cabinet extends CI_Controller
                 'comp_id'=>$comp_id,
                 'comp_list'=>$comp_list
             );
-            $this->load->view('admin/adddancerstocomp',$data);
+            $this->load->view('admin    /adddancerstocomp',$data);
         }
     }
 }
