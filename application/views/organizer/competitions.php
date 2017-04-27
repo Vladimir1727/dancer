@@ -225,7 +225,7 @@
 
 <div class="row">
     <div class="col-md-2">
-        <button class="btn btn-success" id="new_but" data-toggle="modal" data-target="#newmodal">Создать</button>
+        <!-- <button class="btn btn-success" id="new_but" data-toggle="modal" data-target="#newmodal">Создать</button> -->
     </div>
     <div class="col-md-8">
         <table class="table table-striped" id="main_table">

@@ -110,7 +110,12 @@ class Ajax extends CI_Controller {
     {
         $table=$_POST['table'];
         $id=$_POST['id'];
-        $res=$this->AjaxModel->delete($table,$id);
+        if (isset($_POST['soft'])){
+            $soft=$_POST['soft'];
+        } else {
+            $soft=1;
+        }
+        $res=$this->AjaxModel->delete($table,$id,$soft);
         echo $res;
     }
     
@@ -308,6 +313,11 @@ class Ajax extends CI_Controller {
         echo $list;
     }
     
+    public function getCompListAdmin2()
+    {
+        echo $this->AjaxModel->AdminCompList($_POST['comp_id'], 'admin');
+    }
+    
     public function savePays()
     {
         $res=$this->AjaxModel->savePays($_POST);
@@ -374,16 +384,7 @@ class Ajax extends CI_Controller {
         echo $this->AjaxModel->getYearPay($_POST['type']);
     }
     
-    public function test()
-    {
-        echo "TEST <br>";
-        //$file="list1.csv";
-        //$res=$this->AjaxModel->uploadResult($file,3);
-        //var_dump($res);
-        echo date('Y-m-d',time());
-        
-    }
-    
+  
     public function saveYearPays()
     {
         $res=$this->AjaxModel->saveYearPays($_POST);
@@ -404,5 +405,20 @@ class Ajax extends CI_Controller {
     public function selectDancers()
     {
         echo $this->AjaxModel->selectDancers($_POST['id']);
+    }
+    
+    public function delPart()
+    {
+        echo $this->AjaxModel->delPart($_POST['id']);
+    }
+    
+    public function test()
+    {
+        echo "TEST <br>";
+        $list = $this->AjaxModel->getCompList(3,'admin');
+        echo '<pre>';
+        $res= $this->AjaxModel->getCSVlist($list);
+        var_dump($res);
+        echo '</pre>';
     }
 }

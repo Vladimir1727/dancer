@@ -8,6 +8,7 @@ class Auth extends CI_Controller {
 		parent::__construct();
 		$this->load->model('AuthModel');
 		$this->load->library('session');
+                $this->load->model('CabinetModel');
 	}
 
 	public function index()
@@ -55,7 +56,8 @@ class Auth extends CI_Controller {
     public function enter(){
     	$user=$this->AuthModel->login($_POST['email'],$_POST['pass']);
     	if ($user==true){
-    		$this->load->view('main');
+            $comp_list = $this->CabinetModel->mainCompList();
+            $this->load->view('main',['list'=>$comp_list]);
         }
     	else{
     		$error="Неправильный логин/пароль";

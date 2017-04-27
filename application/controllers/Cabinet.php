@@ -125,7 +125,7 @@ class Cabinet extends CI_Controller
             $config = $this->CabinetModel->paginate('users','index.php/cabinet/adminusers');
             $users = $this->CabinetModel->getUsers($id);
             $this->pagination->initialize($config);
-            $this->load->view('admin/users',['users' => $users]);
+            $this->load->view('admin/users',['users' => $users, 'page'=>$id]);
         }
     }
 
@@ -288,10 +288,13 @@ class Cabinet extends CI_Controller
             $trainer_id = $this->AjaxModel->getTrainerId($this->session->id);
             $comp_list=$this->AjaxModel->getCompListHtml($id, 'trainer', $trainer_id);
             $dancers = $this->CabinetModel->allDancersToComp('trainer');
+            $list = $this->AjaxModel->getCompList2($id, 'trainer', $trainer_id);
+            $files = $this->AjaxModel->getCSVlist($list, 'trainer');
             $data=array(
                 'dancers'=>$dancers,
                 'comp_id'=>$id,
-                'comp_list'=>$comp_list
+                'comp_list'=>$comp_list,
+                'files'=>$files,
             );
             $this->load->view('trainer/adddancerstocomp',$data);
         }
@@ -325,10 +328,13 @@ class Cabinet extends CI_Controller
             $this->load->view('errors/error_access');
         }
         else {
-            $comp_list=$this->AjaxModel->AdminCompList($id, 'admin');
+            $comp_list = $this->AjaxModel->AdminCompList($id, 'admin');
+            $list = $this->AjaxModel->getCompList2($id, 'admin');
+            $files = $this->AjaxModel->getCSVlist($list);
             $data=array(
                 'comp_id'=>$id,
                 'comp_list'=>$comp_list,
+                'files'=>$files,
             );
             $this->load->view('admin/competition',$data);
         }
@@ -375,10 +381,13 @@ class Cabinet extends CI_Controller
             $club_id = $this->AjaxModel->getClubId($this->session->id);
             $comp_list=$this->AjaxModel->getCompListHtml($comp_id, 'cluber', $club_id);
             $dancers = $this->CabinetModel->allDancersToComp('cluber');
+            $list = $this->AjaxModel->getCompList2($comp_id, 'cluber', $club_id);
+            $files = $this->AjaxModel->getCSVlist($list, 'cluber');
             $data=array(
                 'dancers'=>$dancers,
                 'comp_id'=>$comp_id,
-                'comp_list'=>$comp_list
+                'comp_list'=>$comp_list,
+                'files'=>$files
             );
             $this->load->view('trainer/adddancerstocomp',$data);
         }
@@ -404,9 +413,12 @@ class Cabinet extends CI_Controller
         }
         else {
             $comp_list=$this->AjaxModel->AdminCompList($comp_id, 'admin');
+            $list = $this->AjaxModel->getCompList2($comp_id, 'admin');
+            $files = $this->AjaxModel->getCSVlist($list);
             $data=[
                 'comp_id'=>$comp_id,
-                'comp_list'=>$comp_list
+                'comp_list'=>$comp_list,
+                'files'=>$files,
                     ];
             $this->load->view('organizer/competition',$data);
         }

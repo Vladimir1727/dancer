@@ -43,6 +43,12 @@
 <a class="btn btn-default" href="../compcontacts/<?php echo $comp_id; ?>" target="_blank">Контакты</a>
 <a class="btn btn-success" href="../adddancers/<?php echo $comp_id; ?>" target="_blank">Добавить танцоров</a>
 <button class="btn btn-danger" id="done_but">Завершить конкурс</button>
+<h3>Скачать в формате CSV:</h3>
+<?php
+ foreach($files as $file){
+     echo '<a href="'.base_url().$file['file'].'" class="btn btn-link">'.$file['name'].'</a><br>';
+ }
+?>
 <p id="mess"></p>
 <div class="row">
     <div class="col-md-12">

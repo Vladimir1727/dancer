@@ -36,7 +36,6 @@
     <div class="col-md-6">
         <table class="table">
             <tbody id="comp_list">
-                
             </tbody>
             <thead>
                 <tr>

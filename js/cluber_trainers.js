@@ -58,10 +58,11 @@ function addClick(){
 	$(this).click(function(){
             var id=$(this).attr('id').substr(1);
             $.ajax({
-		url:'../ajax/dancerInfo',
+		url:'../ajax/trainerInfo',
 		type:'POST',
 		data:'id='+id,
 		success: function(data){
+                console.log('json=',data);
                 var modal=JSON.parse(data);
                     $('#e_status option').each(function(){
                         if ($(this).val()==modal.dancer){

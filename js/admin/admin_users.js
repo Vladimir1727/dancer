@@ -18,7 +18,7 @@ $('#save_but').click(function(){
 		success: function(data){
 
 		}
-	})
+	});
 	return false;
 });
 
@@ -40,19 +40,20 @@ $('#filter_but').click(function(){
 			$('#user_table tbody').html(table);
 			user_click();
 		}
-	})
+	});
 
 	return false;
 });
 
 function user_click(){
-	$('td.pointer').each(function(){
-		$(this).click(function(){
-			var id=$(this).parent().find('td.hidden').text();
-			$('#edit_block').hide();
-			user_info(id);
-		});
-	});
+    $('td.pointer').each(function(){
+        $(this).click(function(){
+                var id=$(this).parent().find('td.hidden').text();
+                console.log('id=',id);
+                $('#edit_block').hide();
+                user_info(id);
+        });
+    });
 }
 
 user_click();

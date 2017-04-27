@@ -127,10 +127,14 @@ class AjaxModel extends CI_Model{
         return $this->db->insert($table, $data);
     }
 
-    public function delete($table,$id)
+    public function delete($table,$id,$soft=1)
     {
         $this->db->where('id', $id);
-        return $this->db->update($table, array('deleted'=>1));
+        if ($soft == 1) { 
+            return $this->db->update($table, array('deleted'=>1));
+        } else {
+            return $this->db->delete($table);
+        }
     }
     
     public function getStyles($way)
@@ -516,6 +520,8 @@ class AjaxModel extends CI_Model{
             if ($row['type']==1) $html.='<td>'.$row['pay_iude'].'</td>';
             if ($row['type']==2) $html.='<td>'.$row['pay_other'].'</td>';
             if ($row['type']==3) $html.='<td>'.$row['pay_not'].'</td>';
+            $html.='<td><a href="'.$row['part'].'" class="deldan">'
+                    . '<img src="/img/delete_16.png" alt="del"></a></td>';
             $html.='</tr>';
         }
         return $html;
@@ -533,6 +539,8 @@ class AjaxModel extends CI_Model{
             if ($row['type']==1) $html.='<td>'.$row['pay_iude'].'</td>';
             if ($row['type']==2) $html.='<td>'.$row['pay_other'].'</td>';
             if ($row['type']==3) $html.='<td>'.$row['pay_not'].'</td>';
+            $html.='<td><a href="'.$row['part'].'" class="deldan">'
+                    . '<img src="/img/delete_16.png" alt="del"></a></td>';
             $html.='</tr>';
         }
         return $html;
@@ -542,7 +550,7 @@ class AjaxModel extends CI_Model{
     {
         switch ($role){
             case 'trainer':
-                $q = $this->db->query('select DISTINCT u.first_name, u.last_name,'
+                $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name, cl.part,'
                         . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
@@ -556,7 +564,7 @@ class AjaxModel extends CI_Model{
                 $res = $q->result_array();
                 break;
             case 'admin':
-                $q = $this->db->query('select DISTINCT u.first_name, u.last_name, cl.part, cl.points,'
+                $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name, cl.part, cl.points, cl.part,'
                         . ' (select name from ligs where id=(select experience.lig_id from experience where experience.dancer_id=d.id '
                         . ' and experience.way_id=(select way_id from competitions where id='.$comp_id.'))) as danlig,'
                         . ' b.type, p.pay_iude, p.pay_other, p.pay_not, d.birthdate,b.name as bell,'
@@ -571,7 +579,7 @@ class AjaxModel extends CI_Model{
                 $res = $q->result_array();
                 break;
             case 'cluber':
-                $q = $this->db->query('select DISTINCT u.first_name, u.last_name,'
+                $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name,cl.part,'
                         . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
@@ -585,7 +593,7 @@ class AjaxModel extends CI_Model{
                 $res = $q->result_array();
                 break;
             case 'organizer':
-                $q = $this->db->query('select DISTINCT u.first_name, u.last_name, d.birthdate,'
+                $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name, d.birthdate,cl.part,'
                         . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
@@ -599,6 +607,139 @@ class AjaxModel extends CI_Model{
                 break;
         }
         return $res;
+    }
+    
+    public function getCompList2($comp_id, $role, $role_id=0)
+    {
+        switch ($role){
+            case 'trainer':
+                $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name, cl.part,'
+                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
+                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
+                        . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
+                        . ' comp_list cl, bellydance b, pays p'
+                        . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
+                        . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
+                        . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
+                        . ' and cl.comp_id='.$comp_id.' and d.trainer_id='.$role_id.''
+                        . ' and d.bell_id=b.id'
+                        . ' order by cl.part asc');
+                $res = $q->result_array();
+                break;
+            case 'admin':
+                $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name, cl.part, cl.points, cl.part,'
+                        . ' (select name from ligs where id=(select experience.lig_id from experience where experience.dancer_id=d.id '
+                        . ' and experience.way_id=(select way_id from competitions where id='.$comp_id.'))) as danlig,'
+                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not, d.birthdate,b.name as bell,'
+                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
+                        . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
+                        . ' comp_list cl, bellydance b, pays p'
+                        . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
+                        . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
+                        . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
+                        . ' and d.bell_id=b.id and cl.comp_id='.$comp_id.' '
+                        . ' order by cl.part asc');
+                $res = $q->result_array();
+                break;
+            case 'cluber':
+                $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name,cl.part,'
+                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
+                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
+                        . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
+                        . ' comp_list cl, bellydance b, pays p, trainers t'
+                        . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
+                        . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
+                        . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
+                        . ' and cl.comp_id='.$comp_id.' and t.club_id='.$role_id.''
+                        . ' and d.bell_id=b.id and d.trainer_id=t.id'
+                        . ' order by cl.part asc');
+                $res = $q->result_array();
+                break;
+            case 'organizer':
+                $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name, d.birthdate,cl.part,'
+                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
+                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
+                        . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
+                        . ' comp_list cl, bellydance b, pays p'
+                        . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
+                        . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
+                        . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
+                        . ' and d.bell_id=b.id and cl.comp_id='.$comp_id.' '
+                        . ' order by cl.part asc');
+                $res = $q->result_array();
+                break;
+        }
+        $arr = [];
+        /*for($i=0;$i<count($res);$i++){
+            $arr[$i] = [];
+            $arr[$i]['id'] = $res[$i]['id'];
+        }*/
+        $i = 0;
+        foreach($res as $r){
+            $arr[$i]=[];
+            foreach($r as $k=>$v){
+                switch ($k){
+                    case 'id':
+                        $arr[$i]['id'] = $v;
+                        break;
+                    case 'first_name':
+                        $arr[$i]['имя'] = $v;
+                        break;
+                    case 'last_name':
+                        $arr[$i]['фамилия'] = $v;
+                        break;
+                    case 'part':
+                        $arr[$i]['участие'] = $v;
+                        break;
+                    case 'points':
+                        $arr[$i]['очки'] = $v;
+                        break;
+                    case 'danlig':
+                        $arr[$i]['лига танцора'] = $v;
+                        break;
+                    case 'birthdate':
+                        $arr[$i]['дата рождения'] = $v;
+                        break;
+                    case 'bell':
+                        $arr[$i]['членство'] = $v;
+                        break;
+                    case 'lig':
+                        $arr[$i]['лига соревн'] = $v;
+                        break;
+                    case 'style':
+                        $arr[$i]['стиль танца'] = $v;
+                        break;
+                    case 'count_cat':
+                        $arr[$i]['кат.по кол.'] = $v;
+                        break;
+                    case 'age_cat':
+                        $arr[$i]['кат.по возр'] = $v;
+                        break;
+                    case 'pay_iude':
+                        if ($r['type']==1){
+                            $arr[$i]['взнос'] = $v;
+                        }
+                        break;
+                    case 'pay_other':
+                        if ($r['type']==2){
+                            $arr[$i]['взнос'] = $v;
+                        }
+                        break;
+                    case 'pay_not':
+                        if ($r['type']==3){
+                            $arr[$i]['взнос'] = $v;
+                        }
+                        break;
+                    case 'type':
+                        break;
+                    default :
+                        $arr[$i][$k] = $v;
+                    break;
+                }
+            }
+            $i++;
+        }
+        return $arr;
     }
     
     public function getCompListCsv($comp_id, $role, $role_id)
@@ -715,7 +856,8 @@ class AjaxModel extends CI_Model{
                 . ' where cl.lig_id=l.id and cl.count_id=cc.id'
                 . ' and cc.name="Соло" and l.name="Дебют" and cl.comp_id='.$comp_id);
         $res = $q->result_array();
-        $html='<tr><td>Дебют Соло</td><td>'.$res[0]['solo'].'</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
+        if (count($res)>0) $html='<tr><td>Дебют Соло</td><td>'.$res[0]['solo'].'</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
+        else $html='<tr><td>Дебют Соло</td><td> - </td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
         
         $q = $this->db->query('select DISTINCT l.name as lig_name, cc.name as count_name,'
                 . ' cl.lig_id, cl.style_id, cl.age_id, cl.count_id, cl.part'
@@ -723,7 +865,7 @@ class AjaxModel extends CI_Model{
                 . ' where cl.lig_id=l.id and cl.count_id=cc.id and cl.comp_id='.$comp_id.' '
                 . '  order by cl.style_id, cl.age_id ASC');
         $data= $q->result_array();
-        
+        if (count($data)==0) return $html;
         $q = $this->db->query('select DISTINCT cc.max_count, l.name as lig_name, cc.name as count_name,'
                 . ' cl.lig_id, cl.count_id'
                 . ' from comp_list cl, cat_count cc, ligs l'
@@ -1105,4 +1247,137 @@ class AjaxModel extends CI_Model{
         return $html;
     }
     
+    public function delPart($part)
+    {
+        $q = $this->db->where('part',$part);
+        $q = $this->db->delete('comp_list');
+        return true;
+    }
+    
+    public function getCSVlist($list, $role = 'admin'){
+        $files = [];
+        if (count($list)==0) return $files;
+        $n = 0;//счетчик числа файлов
+        if ($role == 'admin'){
+            $files[0] = [];
+            $files[0]['name'] = 'Всё';
+            $name =  'list_'.$this->session->id.'_0';
+            $files[0]['file'] = $this->makeCSV($list, $name);
+        }
+        $dan = implode(',', array_unique(array_column($list, 'id')));
+        $q = $this->db->query('select DISTINCT c.title, t.club_id, d.trainer_id, d.id,'
+                . ' u.first_name, u.last_name, u.father_name'
+                . ' from clubers c, trainers t, users u, dancers d'
+                . ' where d.trainer_id=t.id and t.club_id=c.id and t.user_id=u.id'
+                . ' and d.id in ('.$dan.')');
+        $club_list = $q->result_array();//получаем весь массив тренеров с клубами
+        $clubs = array_unique(array_column($club_list, 'club_id'));//получаем только id КЛУБОВ
+        $i = 0;
+        $club = [];//массив со списком тренеров по клубам
+        foreach ($clubs as $cl){
+            $club[$i]=[];
+            $club[$i]['club_id'] = $cl;
+            $club[$i]['trainers']=[];
+            foreach ($club_list as $clist){
+                if ($cl == $clist['club_id']){
+                    $club[$i]['title'] = $clist['title'];
+                    $trainers = array_column($club[$i]['trainers'], 'trainer_id');
+                    if (!in_array($clist['trainer_id'], $trainers)){
+                        $club[$i]['trainers'][]=['trainer_id'=>$clist['trainer_id'], 
+                        'trainer_name'=>$clist['last_name'].' '.$clist['first_name'].' '.$clist['father_name'],
+                        'dancers'=>[]];
+                    }
+                    
+                }
+            }
+            $i++;
+        }//завершено создание массива тренеров по клубам
+        foreach ($club as $k=>$cl){
+            foreach ($cl['trainers'] as $t=>$tr){
+                foreach ($club_list as $clist){
+                    if ($clist['trainer_id'] == $tr['trainer_id']){
+                        if (!in_array($clist['id'], $club[$k]['trainers'][$t]['dancers'])){
+                            $club[$k]['trainers'][$t]['dancers'][] = $clist['id'];
+                        }
+                    }
+                }
+            }
+        }//добавили к тренерам танцоров
+        foreach ($club as $cl){//перебираем все клубы
+            if ($role == 'admin' || $role == 'cluber'){
+                $arr=[];//временный массив для передачи в файл
+                foreach ($list as $l){
+                    $find = false;
+                    foreach ($cl['trainers'] as $tr){
+                        foreach ($tr['dancers'] as $dan){
+                            if ($l['id'] == $dan){
+                                $find = true;
+                            }
+                        }
+                    }
+                    if ($find) {
+                        $arr[] = $l;
+                    }
+                }//окончание создания временного масива для клуба
+                $n++;
+                $files[$n] = [];
+                $files[$n]['name'] = 'Клуб '.$cl['title'];
+                $name =  'list_'.$this->session->id.'_'.$n;
+                $files[$n]['file'] = $this->makeCSV($arr, $name);
+            }
+            foreach ($cl['trainers'] as $tr){//создаём списки по тренерам
+                $arr=[];//временный массив для передачи в файл
+                foreach ($list as $l){
+                    $find = false;
+                    foreach ($tr['dancers'] as $dan){
+                        if ($l['id'] == $dan){
+                            $find = true;
+                        }
+                    }
+                    if ($find) {
+                        $arr[] = $l;
+                    }
+                }//окончание создания временного масива для тренера
+                $n++;
+                $files[$n] = [];
+                $files[$n]['name'] = 'Клуб '.$cl['title'].' Тренер '.$tr['trainer_name'];
+                $name =  'list_'.$this->session->id.'_'.$n;
+                $files[$n]['file'] = $this->makeCSV($arr, $name);
+            }
+        }
+        return $files;
+    }
+    
+    function makeCSV($arr, $name){
+        $file = 'csv/' . $name . '.csv';
+        $html = '';
+        if (count($arr)==0) return false;
+        $keys = array_keys($arr[0]);
+        $first = true;
+        foreach ($keys as $k){
+            if (!$first){
+                    $html .= ',';
+                } else {
+                    $first = false;
+                }
+                $html .= $k;
+        }
+        $html .= "\r\n";
+        foreach ($arr as $row){
+            $first = true;
+            foreach ($row as $r){
+                if (!$first){
+                    $html .= ',';
+                } else {
+                    $first = false;
+                }
+                $html .= $r;
+            }
+            $html .= "\r\n";
+        }
+        $h = fopen($file, "w");
+        fwrite($h, $html);
+        fclose($h);
+        return $file;
+    }
 }

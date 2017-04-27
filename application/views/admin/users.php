@@ -212,4 +212,9 @@
 <?php 
 
 $this->load->view('footer'); ?>
-<script src="<?php echo base_url(); ?>/js/admin_users.js"></script>
+<script src="<?php 
+$str = base_url();
+if ($page == 0) $str.='/js/admin/admin_users.js';
+else $str.='/js/admin/admin_users_page.js';
+echo $str;
+?>"></script>

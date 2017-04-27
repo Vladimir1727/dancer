@@ -42,6 +42,12 @@
 <p id="mess"></p>
 <div class="row">
     <div class="col-md-12">
+    <h3>Скачать в формате CSV:</h3>
+<?php
+ foreach($files as $file){
+     echo '<a href="'.base_url().$file['file'].'" class="btn btn-link">'.$file['name'].'</a><br>';
+ }
+?>
         <table class="table table-striped" id="main_table">
             <caption>Участники соревнования</caption>
             <tbody id="comp_list">

@@ -491,7 +491,6 @@ class CabinetModel extends CI_Model{
                     $html.=' <a href="../orgcompetition/'.$r->id.'" class="btn btn-default btn-sm comp" id="c'.$r->id.'">управление</a>';
                 }
             }
-            
             $html .= '</td></tr>';
         }
         return $html;
@@ -538,7 +537,7 @@ class CabinetModel extends CI_Model{
     {
         $dancers = $data['dancer'];
         $comp_id = $data['comp_id'];
-        //находим количесвов группе
+        //находим количесво в группе
         $d_count=count($dancers);
         //получаем массив возрастов
         $ages = array();
@@ -572,7 +571,7 @@ class CabinetModel extends CI_Model{
         }
         //получаем массив категорий по количеству
         $q = $this->db->query('select id, name from cat_count'
-                . ' where min_count>='.$d_count.' and max_count<='.$d_count.' and deleted=0');
+                . ' where min_count<='.$d_count.' and max_count>='.$d_count.' and deleted=0');
         $count_cat = $q->result_array();
         //получаем список лиг
         if ($d_count > 1){
