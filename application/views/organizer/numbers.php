@@ -1,9 +1,8 @@
 <?php $this->load->view('header');?>
-<?php include_once 'menu.php';?>
 
 <h1 class="h3">Номера участников соревнования</h1>
 <input type="hidden" value="<?php echo $comp_id;?>" id="comp_id">
-<a href="<?php echo base_url().'index.php/cabinet/admincompetition/'.$comp_id; ?>">
+<a href="<?php echo base_url().'index.php/cabinet/orgcompetition/'.$comp_id; ?>">
     Назад к соревнованию
 </a>
 <button class="btn btn-warning" id="calc">Рассчитать номера</button>

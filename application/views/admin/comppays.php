@@ -1,6 +1,9 @@
 <?php $this->load->view('header');?>
 <?php include_once 'menu.php';?>
 <h1 class="h1 text-success">оплата за конкурс</h1>
+<a href="<?php echo base_url().'index.php/cabinet/admincompetition/'.$comp_id; ?>">
+    Назад к соревнованию
+</a>
 <p id="mess"></p>
 <div class="row">
     <div class="col-md-4">

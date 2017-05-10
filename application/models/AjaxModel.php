@@ -504,7 +504,7 @@ class AjaxModel extends CI_Model{
         $html='';
         foreach ($rows as $row){
             $html.='<tr>';
-            $html.='<td>'.$row['part'].'</td>';
+            $html.='<td>'.$row['print_number'].'</td>';
             $html.='<td>'.$row['last_name'].' '.$row['first_name'].'</td>';
             $html.='<td>'.substr($row['birthdate'],0,4).'</td>';
             if ($row['danlig']==null){
@@ -520,7 +520,7 @@ class AjaxModel extends CI_Model{
             if ($row['type']==1) $html.='<td>'.$row['pay_iude'].'</td>';
             if ($row['type']==2) $html.='<td>'.$row['pay_other'].'</td>';
             if ($row['type']==3) $html.='<td>'.$row['pay_not'].'</td>';
-            $html.='<td><a href="'.$row['part'].'" class="deldan">'
+            $html.='<td><a href="'.$row['print_number'].'" class="deldan">'
                     . '<img src="/img/delete_16.png" alt="del"></a></td>';
             $html.='</tr>';
         }
@@ -539,6 +539,7 @@ class AjaxModel extends CI_Model{
             if ($row['type']==1) $html.='<td>'.$row['pay_iude'].'</td>';
             if ($row['type']==2) $html.='<td>'.$row['pay_other'].'</td>';
             if ($row['type']==3) $html.='<td>'.$row['pay_not'].'</td>';
+            $html.='<td>'.$row['print_number'].'</td>';
             $html.='<td><a href="'.$row['part'].'" class="deldan">'
                     . '<img src="/img/delete_16.png" alt="del"></a></td>';
             $html.='</tr>';
@@ -551,7 +552,7 @@ class AjaxModel extends CI_Model{
         switch ($role){
             case 'trainer':
                 $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name, cl.part,'
-                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
+                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not, cl.print_number,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
                         . ' comp_list cl, bellydance b, pays p'
@@ -568,7 +569,7 @@ class AjaxModel extends CI_Model{
                         . ' (select name from ligs where id=(select experience.lig_id from experience where experience.dancer_id=d.id '
                         . ' and experience.way_id=(select way_id from competitions where id='.$comp_id.'))) as danlig,'
                         . ' b.type, p.pay_iude, p.pay_other, p.pay_not, d.birthdate,b.name as bell,'
-                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
+                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat, cl.print_number'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
                         . ' comp_list cl, bellydance b, pays p'
                         . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
@@ -580,7 +581,7 @@ class AjaxModel extends CI_Model{
                 break;
             case 'cluber':
                 $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name,cl.part,'
-                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
+                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not, cl.print_number,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
                         . ' comp_list cl, bellydance b, pays p, trainers t'
@@ -594,7 +595,7 @@ class AjaxModel extends CI_Model{
                 break;
             case 'organizer':
                 $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name, d.birthdate,cl.part,'
-                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
+                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not, cl.print_number,'
                         . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
                         . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
                         . ' comp_list cl, bellydance b, pays p'
@@ -611,69 +612,8 @@ class AjaxModel extends CI_Model{
     
     public function getCompList2($comp_id, $role, $role_id=0)
     {
-        switch ($role){
-            case 'trainer':
-                $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name, cl.part,'
-                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
-                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
-                        . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
-                        . ' comp_list cl, bellydance b, pays p'
-                        . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
-                        . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
-                        . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
-                        . ' and cl.comp_id='.$comp_id.' and d.trainer_id='.$role_id.''
-                        . ' and d.bell_id=b.id'
-                        . ' order by cl.part asc');
-                $res = $q->result_array();
-                break;
-            case 'admin':
-                $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name, cl.part, cl.points, cl.part,'
-                        . ' (select name from ligs where id=(select experience.lig_id from experience where experience.dancer_id=d.id '
-                        . ' and experience.way_id=(select way_id from competitions where id='.$comp_id.'))) as danlig,'
-                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not, d.birthdate,b.name as bell,'
-                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
-                        . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
-                        . ' comp_list cl, bellydance b, pays p'
-                        . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
-                        . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
-                        . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
-                        . ' and d.bell_id=b.id and cl.comp_id='.$comp_id.' '
-                        . ' order by cl.part asc');
-                $res = $q->result_array();
-                break;
-            case 'cluber':
-                $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name,cl.part,'
-                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
-                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
-                        . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
-                        . ' comp_list cl, bellydance b, pays p, trainers t'
-                        . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
-                        . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
-                        . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
-                        . ' and cl.comp_id='.$comp_id.' and t.club_id='.$role_id.''
-                        . ' and d.bell_id=b.id and d.trainer_id=t.id'
-                        . ' order by cl.part asc');
-                $res = $q->result_array();
-                break;
-            case 'organizer':
-                $q = $this->db->query('select DISTINCT d.id, u.first_name, u.last_name, d.birthdate,cl.part,'
-                        . ' b.type, p.pay_iude, p.pay_other, p.pay_not,'
-                        . ' l.name as lig, s.style, cc.name as count_cat, ca.name as age_cat'
-                        . ' from ligs l, styles s, cat_count cc, cat_age ca, users u, dancers d,'
-                        . ' comp_list cl, bellydance b, pays p'
-                        . ' where cl.dancer_id=d.id and cl.lig_id=l.id and cl.style_id=s.id'
-                        . ' and cl.age_id=ca.id and cl.count_id=cc.id and d.user_id=u.id'
-                        . ' and p.comp_id=cl.comp_id and p.lig_id=cl.lig_id and p.count_id=cl.count_id'
-                        . ' and d.bell_id=b.id and cl.comp_id='.$comp_id.' '
-                        . ' order by cl.part asc');
-                $res = $q->result_array();
-                break;
-        }
+        $res = $this->getCompList($comp_id, $role, $role_id);
         $arr = [];
-        /*for($i=0;$i<count($res);$i++){
-            $arr[$i] = [];
-            $arr[$i]['id'] = $res[$i]['id'];
-        }*/
         $i = 0;
         foreach($res as $r){
             $arr[$i]=[];
@@ -688,8 +628,11 @@ class AjaxModel extends CI_Model{
                     case 'last_name':
                         $arr[$i]['фамилия'] = $v;
                         break;
-                    case 'part':
+                    /*case 'part':
                         $arr[$i]['участие'] = $v;
+                        break;*/
+                    case 'print_number':
+                        $arr[$i]['номер печать'] = $v;
                         break;
                     case 'points':
                         $arr[$i]['очки'] = $v;
@@ -733,7 +676,7 @@ class AjaxModel extends CI_Model{
                     case 'type':
                         break;
                     default :
-                        $arr[$i][$k] = $v;
+                        /*$arr[$i][$k] = $v;*/
                     break;
                 }
             }
@@ -918,12 +861,12 @@ class AjaxModel extends CI_Model{
             foreach ($data_sum as $d){
                 if ($cat['lig_id'] == $d['lig_id'] && $cat['count_id'] == $d['count_id']){
                     if ($cat['max_count']<4){
-                        $medal1++;
+                        $medal1 += 1 * $cat['max_count'];
                         if ($d['count']>1){
-                            $medal2++;
+                            $medal2 += 1 * $cat['max_count'];
                         }
                         if ($d['count']>2){
-                            $medal3++;
+                            $medal3 += 1 * $cat['max_count'];
                         }
                     }else{
                         $kub1++;
@@ -1169,6 +1112,93 @@ class AjaxModel extends CI_Model{
             $html.='</tr>';
         }
         return $html;
+    }
+    
+    public function getYearPay2($type, $num, $page)
+    {
+        switch ($type){
+            case "all":
+                $sel='select u.last_name, u.first_name, u.father_name, d.id,'
+                    . ' u.phone, u.email, c.title, d.pay'
+                    . ' from users u, dancers d, trainers t, clubers c'
+                    . ' where d.user_id=u.id and d.trainer_id=t.id and t.club_id=c.id'
+                    . ' order by d.id'
+                    . ' limit ' . (($page - 1) * $num) . ',' . $num;
+                $q = $this->db->query($sel);
+                $res = $q->result_array();
+                $q = $this->db->query('select count(d.id) as num'
+                    . ' from users u, dancers d, trainers t, clubers c'
+                    . ' where d.user_id=u.id and d.trainer_id=t.id and t.club_id=c.id');
+                $r = $q->result();
+                $all = $r[0]->num;
+                $pages = ceil($all / $num);
+                break;
+            case "yes":
+                $now=date('Y',time());
+                $sel='select u.last_name, u.first_name, u.father_name, d.id, '
+                    . ' u.phone, u.email, c.title, d.pay'
+                    . ' from users u, dancers d, trainers t, clubers c'
+                    . ' where d.user_id=u.id and d.trainer_id=t.id and t.club_id=c.id'
+                    . ' and d.pay>='.$now
+                    . ' order by d.id'
+                    . ' limit ' . (($page - 1) * $num) . ',' . $num;
+                $q = $this->db->query($sel);
+                $res = $q->result_array();
+                $q = $this->db->query('select count(d.id) as num'
+                    . ' from users u, dancers d, trainers t, clubers c'
+                    . ' where d.user_id=u.id and d.trainer_id=t.id and t.club_id=c.id'
+                    . ' and d.pay>='.$now);
+                $r = $q->result();
+                $all = $r[0]->num;
+                $pages = ceil($all / $num);
+                break;
+            case "no":
+                $now=date('Y',time());
+                $sel='select u.last_name, u.first_name, u.father_name,'
+                    . ' u.phone, u.email, c.title, d.pay, d.id'
+                    . ' from users u, dancers d, trainers t, clubers c'
+                    . ' where d.user_id=u.id and d.trainer_id=t.id and t.club_id=c.id'
+                    . ' and (ISNULL(d.pay) or d.pay<'.$now.')'
+                    . ' order by d.id'
+                    . ' limit ' . (($page - 1) * $num) . ',' . $num;
+                $q = $this->db->query($sel);
+                $res = $q->result_array();
+                 $q = $this->db->query('select count(d.id) as num'
+                 . ' from users u, dancers d, trainers t, clubers c'
+                 . ' where d.user_id=u.id and d.trainer_id=t.id and t.club_id=c.id'
+                 . ' and (ISNULL(d.pay) or d.pay<'.$now.')');        
+                $r = $q->result();
+                $all = $r[0]->num;
+                $pages = ceil($all / $num);
+                break;
+        }
+       
+        $html='';
+        foreach ($res as $r){
+            if ($r['pay']==null) $r['pay']=0;
+            $html.='<tr>';
+            $html.='<td><input type="hidden" name="id[]" value='.$r['id'].'>';
+            $html.=$r['last_name'].' '.$r['first_name'].' '.$r['father_name'].'</td>';
+            $html.='<td>'.$r['email'].' '.$r['phone'].'</td>';
+            $html.='<td>'.$r['title'].'</td>';
+            $html.='<td><input type="number" name="year[]" value='.$r['pay'].' class="col-xs-5"></td>';
+            $html.='</tr>';
+        }
+        $data=[];
+        $data['list'] = $html;
+        $data['pagg'] = '<ul class="pager">';
+        if ($page == 1){
+            $data['pagg'] .= '<li class="disabled"><a href="#" id="prev">Предыдущая</a></li>';
+        } else{
+            $data['pagg'] .= '<li><a href="#" id="prev">Предыдущая</a></li>';
+        }
+        $data['pagg'] .= '<li> СТРАНИЦА '.$page.' из '.$pages.' </li>';
+        if ($page == $pages){
+            $data['pagg'] .= '<li class="disabled"><a href="#" id="next">Следующая</a></li></ul>';
+        } else{
+            $data['pagg'] .= '<li><a href="#" id="next">Следующая</a></li></ul>';
+        }
+        return $data;
     }
     
     public function saveYearPays($data)

@@ -46,5 +46,5 @@
         </table>
     </div>
 </div>
-<script src="<?php echo base_url(); ?>js/trainer/select_sum_cat.js"></script>
+<script src="<?php echo base_url(); ?>js/cluber/select_sum_cat.js"></script>
 <?php $this->load->view('footer'); ?>

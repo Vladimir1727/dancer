@@ -16,7 +16,11 @@ class AuthModel extends CI_Model{
 
 	function addUser($data)
 	{
-		$this->db->insert('users', $data);
+            $q = $this->db->query('select id from users where email="'.$data['email'].'"');
+            $r = $q->result_array();
+            if (count($r)>0) return false;
+            $this->db->insert('users', $data);
+            return true;
 	}
 
 	function login($email, $password)

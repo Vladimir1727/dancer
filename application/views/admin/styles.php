@@ -33,7 +33,7 @@
 <?php $this->load->view('admin/menu');?>
 <div class="row">
     <div class="col-md-1"></div>
-    <div class="col-md-5">
+    <div class="col-md-11">
         <select class="form-control" id="way_select">
             <?php echo $ways; ?>
         </select>

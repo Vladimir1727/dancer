@@ -40,7 +40,7 @@ show();
 
 function show(){
     $.ajax({
-        url:'../ajax/getCompListTrainer',
+        url:'../ajax/getCompListCluber',
         type:'POST',
         data:'comp_id='+$('#comp_id').val(),
         success: function(data){

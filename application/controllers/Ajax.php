@@ -306,6 +306,14 @@ class Ajax extends CI_Controller {
         echo $list;
     }
     
+    public function getCompListCluber()
+    {
+        $club_id = $this->AjaxModel->getClubId($this->session->id);
+        $comp_id = $_POST['comp_id'];
+        $list = $this->AjaxModel->getCompListHtml($comp_id, 'cluber', $club_id);
+        echo $list;
+    }
+    
     public function getCompListAdmin()
     {
         $comp_id = $_POST['comp_id'];
@@ -382,6 +390,12 @@ class Ajax extends CI_Controller {
     public function getYearPay()
     {
         echo $this->AjaxModel->getYearPay($_POST['type']);
+    }
+    
+    public function getYearPay2()
+    {
+        echo json_encode($this->AjaxModel->getYearPay2($_POST['type'], $_POST['col'], $_POST['page']));
+        //var_dump($this->AjaxModel->getYearPay2($_POST['type'], $_POST['col'], $_POST['page']));
     }
     
   

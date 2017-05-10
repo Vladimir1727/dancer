@@ -46,11 +46,17 @@ class Auth extends CI_Controller {
 			'organizer'=>$organizer,
 			'cluber'=>$cluber,
 		);
-    	$this->AuthModel->addUser($data);
+    	$add = $this->AuthModel->addUser($data); 
+        if ($add == TRUE){
     	$this->load->view('header');
     	$user=array('email'=>$_POST['email'],'password'=>$_POST['pass1']);
         $this->load->view('auth/logform',$user);
         $this->load->view('footer');
+        } else {
+            $this->load->view('header');
+            $this->load->view('auth/regerr');
+            $this->load->view('footer');
+        }
     }
 
     public function enter(){

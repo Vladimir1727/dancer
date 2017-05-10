@@ -36,7 +36,7 @@
 <h1 class="h1 text-success">Конкурс</h1>
 <input type="hidden" value="<?php echo $comp_id;?>" id="comp_id">
 <button class="btn btn-info" id="reward_but" data-toggle="modal" data-target="#rewardmodal">Для награждения</button>
-<a class="btn btn-info" href="../numbers/<?php echo $comp_id; ?>" target="_blank">Номера участников</a>
+<a class="btn btn-info" href="../orgnumbers/<?php echo $comp_id; ?>" target="_blank">Номера участников</a>
 <a class="btn btn-default" href="../compcontacts/<?php echo $comp_id; ?>" target="_blank">Контакты</a>
 <button class="btn btn-warning" id="close_but">Остановить регистрацию</button>
 <p id="mess"></p>

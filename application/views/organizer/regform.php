@@ -2,7 +2,6 @@
 <form action="<?php echo base_url(); ?>index.php/auth/addorganizer" method="post" id="reg_form">
 	<div class="row">
 		<div class="col-md-4">
-			
 		</div>
 		<div class="col-md-4">
 			<div class="form-group">

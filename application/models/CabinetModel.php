@@ -475,14 +475,14 @@ class CabinetModel extends CI_Model{
                 if (strtotime($r->date_reg_open)<time() && strtotime($r->date_reg_close)>time() && $r->status=='ON'){
                     $html.=' <a href="../cabinet/traineraddtocomp/'.$r->id.'" class="btn btn-success btn-sm comp" id="c'.$r->id.'">регистрация участников</a>';
                 }else{
-                    $html.='регистрация закрыта';
+                    $html.=' <a href="../cabinet/trainercompinfo/'.$r->id.'" class="btn btn-default btn-sm comp" id="c'.$r->id.'">подробнее</a>';
                 }
             }
             if ($role=="cluber"){
                 if (strtotime($r->date_reg_open)<time() && strtotime($r->date_reg_close)>time() && $r->status=='ON'){
                     $html.=' <a href="../cabinet/clubeaddtocomp/'.$r->id.'" class="btn btn-success btn-sm comp" id="c'.$r->id.'">регистрация участников</a>';
                 }else{
-                    $html.='регистрация закрыта';
+                    $html.=' <a href="../cabinet/clubercompinfo/'.$r->id.'" class="btn btn-default btn-sm comp" id="c'.$r->id.'">подробнее</a>';
                 }
             }
             if ($role=='organizer'){
@@ -535,6 +535,7 @@ class CabinetModel extends CI_Model{
     
     public function getCatList($data)
     {
+        if (!isset($data['dancer'])) return false;
         $dancers = $data['dancer'];
         $comp_id = $data['comp_id'];
         //находим количесво в группе
@@ -555,9 +556,14 @@ class CabinetModel extends CI_Model{
                 . ' and way_id=(select way_id from competitions where id='.$comp_id.') and deleted=0');
         $styles = $q->result_array();
         //получаем массив возрастных групп(категорий)
+        if ($d_count>1){
+            $dd=2;
+        } else{
+            $dd=1;
+        }
         $q = $this->db->query('select id, name, min_age, max_age'
                 . ' from cat_age'
-                . ' where dancers_count in (0,'.$comp_id.') and deleted=0');
+                . ' where dancers_count in (0,'.$dd.') and deleted=0');
         $res = $q->result_array();
         $age_cat = array();
         foreach ($res as $r){
@@ -945,5 +951,14 @@ class CabinetModel extends CI_Model{
                 . ' where co.city_id=ci.id and co.org_id=o.id and date_open>now() and o.user_id=u.id');
         $data = $q->result_array();
         return $data;
+    }
+    
+    public function getCompStatus($id)
+    {
+        $q = $this->db->query('select s.status'
+                . ' from competitions c, statuses s'
+                . ' where s.id=c.status_id and c.id='.$id);
+        $res = $q->result_array();
+        return $res[0]['status'];
     }
 }
